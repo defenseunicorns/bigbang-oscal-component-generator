@@ -2,11 +2,14 @@ package main
 
 import (
 	"fmt"
-
-	internalYaml "github.com/defenseunicorns/bigbang-oscal-component-generator/internal/yaml"
+	"github.com/defenseunicorns/bigbang-oscal-component-generator/pkg/bigbangoscal"
+	"log"
 )
 
 func main() {
-	s, _ := internalYaml.BuildBigBangOscalComponentDocument()
-	fmt.Println(s)
+	yamlDoc, err := bigbangoscal.BuildBigBangOscalDocument()
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println(yamlDoc)
 }

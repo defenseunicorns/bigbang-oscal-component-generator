@@ -1,14 +1,10 @@
-package yaml
+package bigbang
 
 import (
-	"fmt"
-	"io/ioutil"
-	"net/http"
-	"net/url"
-	"strings"
-	"time"
-
+	"github.com/defenseunicorns/bigbang-oscal-component-generator/internal/http"
+	"github.com/defenseunicorns/bigbang-oscal-component-generator/internal/oscal"
 	"gopkg.in/yaml.v2"
+	"net/url"
 )
 
 type BigBangValues struct {
@@ -756,215 +752,136 @@ type BigBangValues struct {
 	} `yaml:"addons"`
 }
 
-type OscalComponentDocument struct {
-	ComponentDefinition struct {
-		UUID     string `yaml:"uuid"`
-		Metadata struct {
-			Title        string    `yaml:"title"`
-			LastModified time.Time `yaml:"last-modified"`
-			Version      int       `yaml:"version"`
-			OscalVersion string    `yaml:"oscal-version"`
-			Parties      []struct {
-				UUID  string `yaml:"uuid"`
-				Type  string `yaml:"type"`
-				Name  string `yaml:"name"`
-				Links []struct {
-					Href string `yaml:"href"`
-					Rel  string `yaml:"rel"`
-				} `yaml:"links"`
-			} `yaml:"parties"`
-		} `yaml:"metadata"`
-		Components []OscalComponent `yaml:"components"`
-		BackMatter struct {
-			Resources []struct {
-				UUID   string `yaml:"uuid"`
-				Title  string `yaml:"title"`
-				Rlinks []struct {
-					Href string `yaml:"href"`
-				} `yaml:"rlinks"`
-			} `yaml:"resources"`
-		} `yaml:"back-matter"`
-	} `yaml:"component-definition"`
-}
-
-type OscalComponent struct {
-	UUID             string `yaml:"uuid"`
-	Type             string `yaml:"type"`
-	Title            string `yaml:"title"`
-	Description      string `yaml:"description"`
-	Purpose          string `yaml:"purpose"`
-	ResponsibleRoles []struct {
-		RoleID    string `yaml:"role-id"`
-		PartyUUID string `yaml:"party-uuid"`
-	} `yaml:"responsible-roles"`
-	ControlImplementations []struct {
-		UUID                    string `yaml:"uuid"`
-		Source                  string `yaml:"source"`
-		Description             string `yaml:"description"`
-		ImplementedRequirements []struct {
-			UUID        string `yaml:"uuid"`
-			ControlID   string `yaml:"control-id"`
-			Description string `yaml:"description"`
-		} `yaml:"implemented-requirements"`
-	} `yaml:"control-implementations"`
-}
-
-func BuildBigBangOscalComponentDocument() (string, error) {
-	var document OscalComponentDocument
-	components, err := getAllOscalComponents()
-	if err != nil {
-		return "", err
-	}
-	document.ComponentDefinition.Components = components
-	bytes, err := yaml.Marshal(&document)
-	if err != nil {
-		return "", err
-	}
-	return string(bytes), nil
-}
-
-func getAllOscalComponents() ([]OscalComponent, error) {
-	var components []OscalComponent
-	documents, err := getAllOscalComponentDocuments()
-	if err != nil {
-		return nil, err
-	}
-	for _, document := range documents {
-		components = append(components, document.ComponentDefinition.Components...)
-	}
-	return components, nil
-}
-
-func getAllOscalComponentDocuments() ([]OscalComponentDocument, error) {
-	var components []OscalComponentDocument
+func GetAllBigBangSubchartOscalComponentDocuments() ([]oscal.OscalComponentDocument, error) {
+	var components []oscal.OscalComponentDocument
 	bigBangValues, err := getBigBangValues()
 	if err != nil {
 		return nil, err
 	}
 	// Core
-	component, err := getOscalComponentYaml(bigBangValues.Istio.Git.Repo, bigBangValues.Istio.Git.Tag)
+	component, err := oscal.GetOscalComponentDocumentFromRepo(bigBangValues.Istio.Git.Repo, bigBangValues.Istio.Git.Tag)
 	if err == nil {
 		components = append(components, component)
 	}
-	component, err = getOscalComponentYaml(bigBangValues.Istiooperator.Git.Repo, bigBangValues.Istiooperator.Git.Tag)
+	component, err = oscal.GetOscalComponentDocumentFromRepo(bigBangValues.Istiooperator.Git.Repo, bigBangValues.Istiooperator.Git.Tag)
 	if err == nil {
 		components = append(components, component)
 	}
-	component, err = getOscalComponentYaml(bigBangValues.Jaeger.Git.Repo, bigBangValues.Jaeger.Git.Tag)
+	component, err = oscal.GetOscalComponentDocumentFromRepo(bigBangValues.Jaeger.Git.Repo, bigBangValues.Jaeger.Git.Tag)
 	if err == nil {
 		components = append(components, component)
 	}
-	component, err = getOscalComponentYaml(bigBangValues.Kiali.Git.Repo, bigBangValues.Kiali.Git.Tag)
+	component, err = oscal.GetOscalComponentDocumentFromRepo(bigBangValues.Kiali.Git.Repo, bigBangValues.Kiali.Git.Tag)
 	if err == nil {
 		components = append(components, component)
 	}
-	component, err = getOscalComponentYaml(bigBangValues.ClusterAuditor.Git.Repo, bigBangValues.ClusterAuditor.Git.Tag)
+	component, err = oscal.GetOscalComponentDocumentFromRepo(bigBangValues.ClusterAuditor.Git.Repo, bigBangValues.ClusterAuditor.Git.Tag)
 	if err == nil {
 		components = append(components, component)
 	}
-	component, err = getOscalComponentYaml(bigBangValues.Gatekeeper.Git.Repo, bigBangValues.Gatekeeper.Git.Tag)
+	component, err = oscal.GetOscalComponentDocumentFromRepo(bigBangValues.Gatekeeper.Git.Repo, bigBangValues.Gatekeeper.Git.Tag)
 	if err == nil {
 		components = append(components, component)
 	}
-	component, err = getOscalComponentYaml(bigBangValues.Kyverno.Git.Repo, bigBangValues.Kyverno.Git.Tag)
+	component, err = oscal.GetOscalComponentDocumentFromRepo(bigBangValues.Kyverno.Git.Repo, bigBangValues.Kyverno.Git.Tag)
 	if err == nil {
 		components = append(components, component)
 	}
-	component, err = getOscalComponentYaml(bigBangValues.Kyvernopolicies.Git.Repo, bigBangValues.Kyvernopolicies.Git.Tag)
+	component, err = oscal.GetOscalComponentDocumentFromRepo(bigBangValues.Kyvernopolicies.Git.Repo, bigBangValues.Kyvernopolicies.Git.Tag)
 	if err == nil {
 		components = append(components, component)
 	}
-	component, err = getOscalComponentYaml(bigBangValues.Logging.Git.Repo, bigBangValues.Logging.Git.Tag)
+	component, err = oscal.GetOscalComponentDocumentFromRepo(bigBangValues.Logging.Git.Repo, bigBangValues.Logging.Git.Tag)
 	if err == nil {
 		components = append(components, component)
 	}
-	component, err = getOscalComponentYaml(bigBangValues.Eckoperator.Git.Repo, bigBangValues.Eckoperator.Git.Tag)
+	component, err = oscal.GetOscalComponentDocumentFromRepo(bigBangValues.Eckoperator.Git.Repo, bigBangValues.Eckoperator.Git.Tag)
 	if err == nil {
 		components = append(components, component)
 	}
-	component, err = getOscalComponentYaml(bigBangValues.Fluentbit.Git.Repo, bigBangValues.Fluentbit.Git.Tag)
+	component, err = oscal.GetOscalComponentDocumentFromRepo(bigBangValues.Fluentbit.Git.Repo, bigBangValues.Fluentbit.Git.Tag)
 	if err == nil {
 		components = append(components, component)
 	}
-	component, err = getOscalComponentYaml(bigBangValues.Promtail.Git.Repo, bigBangValues.Promtail.Git.Tag)
+	component, err = oscal.GetOscalComponentDocumentFromRepo(bigBangValues.Promtail.Git.Repo, bigBangValues.Promtail.Git.Tag)
 	if err == nil {
 		components = append(components, component)
 	}
-	component, err = getOscalComponentYaml(bigBangValues.Loki.Git.Repo, bigBangValues.Loki.Git.Tag)
+	component, err = oscal.GetOscalComponentDocumentFromRepo(bigBangValues.Loki.Git.Repo, bigBangValues.Loki.Git.Tag)
 	if err == nil {
 		components = append(components, component)
 	}
-	component, err = getOscalComponentYaml(bigBangValues.Tempo.Git.Repo, bigBangValues.Tempo.Git.Tag)
+	component, err = oscal.GetOscalComponentDocumentFromRepo(bigBangValues.Tempo.Git.Repo, bigBangValues.Tempo.Git.Tag)
 	if err == nil {
 		components = append(components, component)
 	}
-	component, err = getOscalComponentYaml(bigBangValues.Monitoring.Git.Repo, bigBangValues.Monitoring.Git.Tag)
+	component, err = oscal.GetOscalComponentDocumentFromRepo(bigBangValues.Monitoring.Git.Repo, bigBangValues.Monitoring.Git.Tag)
 	if err == nil {
 		components = append(components, component)
 	}
-	component, err = getOscalComponentYaml(bigBangValues.Twistlock.Git.Repo, bigBangValues.Twistlock.Git.Tag)
+	component, err = oscal.GetOscalComponentDocumentFromRepo(bigBangValues.Twistlock.Git.Repo, bigBangValues.Twistlock.Git.Tag)
 	if err == nil {
 		components = append(components, component)
 	}
 
 	// Addons
-	component, err = getOscalComponentYaml(bigBangValues.Addons.Argocd.Git.Repo, bigBangValues.Addons.Argocd.Git.Tag)
+	component, err = oscal.GetOscalComponentDocumentFromRepo(bigBangValues.Addons.Argocd.Git.Repo, bigBangValues.Addons.Argocd.Git.Tag)
 	if err == nil {
 		components = append(components, component)
 	}
-	component, err = getOscalComponentYaml(bigBangValues.Addons.Authservice.Git.Repo, bigBangValues.Addons.Authservice.Git.Tag)
+	component, err = oscal.GetOscalComponentDocumentFromRepo(bigBangValues.Addons.Authservice.Git.Repo, bigBangValues.Addons.Authservice.Git.Tag)
 	if err == nil {
 		components = append(components, component)
 	}
-	component, err = getOscalComponentYaml(bigBangValues.Addons.MinioOperator.Git.Repo, bigBangValues.Addons.MinioOperator.Git.Tag)
+	component, err = oscal.GetOscalComponentDocumentFromRepo(bigBangValues.Addons.MinioOperator.Git.Repo, bigBangValues.Addons.MinioOperator.Git.Tag)
 	if err == nil {
 		components = append(components, component)
 	}
-	component, err = getOscalComponentYaml(bigBangValues.Addons.Minio.Git.Repo, bigBangValues.Addons.Minio.Git.Tag)
+	component, err = oscal.GetOscalComponentDocumentFromRepo(bigBangValues.Addons.Minio.Git.Repo, bigBangValues.Addons.Minio.Git.Tag)
 	if err == nil {
 		components = append(components, component)
 	}
-	component, err = getOscalComponentYaml(bigBangValues.Addons.Gitlab.Git.Repo, bigBangValues.Addons.Gitlab.Git.Tag)
+	component, err = oscal.GetOscalComponentDocumentFromRepo(bigBangValues.Addons.Gitlab.Git.Repo, bigBangValues.Addons.Gitlab.Git.Tag)
 	if err == nil {
 		components = append(components, component)
 	}
-	component, err = getOscalComponentYaml(bigBangValues.Addons.GitlabRunner.Git.Repo, bigBangValues.Addons.GitlabRunner.Git.Tag)
+	component, err = oscal.GetOscalComponentDocumentFromRepo(bigBangValues.Addons.GitlabRunner.Git.Repo, bigBangValues.Addons.GitlabRunner.Git.Tag)
 	if err == nil {
 		components = append(components, component)
 	}
-	component, err = getOscalComponentYaml(bigBangValues.Addons.Nexus.Git.Repo, bigBangValues.Addons.Nexus.Git.Tag)
+	component, err = oscal.GetOscalComponentDocumentFromRepo(bigBangValues.Addons.Nexus.Git.Repo, bigBangValues.Addons.Nexus.Git.Tag)
 	if err == nil {
 		components = append(components, component)
 	}
-	component, err = getOscalComponentYaml(bigBangValues.Addons.Sonarqube.Git.Repo, bigBangValues.Addons.Sonarqube.Git.Tag)
+	component, err = oscal.GetOscalComponentDocumentFromRepo(bigBangValues.Addons.Sonarqube.Git.Repo, bigBangValues.Addons.Sonarqube.Git.Tag)
 	if err == nil {
 		components = append(components, component)
 	}
-	component, err = getOscalComponentYaml(bigBangValues.Addons.Haproxy.Git.Repo, bigBangValues.Addons.Haproxy.Git.Tag)
+	component, err = oscal.GetOscalComponentDocumentFromRepo(bigBangValues.Addons.Haproxy.Git.Repo, bigBangValues.Addons.Haproxy.Git.Tag)
 	if err == nil {
 		components = append(components, component)
 	}
-	component, err = getOscalComponentYaml(bigBangValues.Addons.Anchore.Git.Repo, bigBangValues.Addons.Anchore.Git.Tag)
+	component, err = oscal.GetOscalComponentDocumentFromRepo(bigBangValues.Addons.Anchore.Git.Repo, bigBangValues.Addons.Anchore.Git.Tag)
 	if err == nil {
 		components = append(components, component)
 	}
-	component, err = getOscalComponentYaml(bigBangValues.Addons.Mattermostoperator.Git.Repo, bigBangValues.Addons.Mattermostoperator.Git.Tag)
+	component, err = oscal.GetOscalComponentDocumentFromRepo(bigBangValues.Addons.Mattermostoperator.Git.Repo, bigBangValues.Addons.Mattermostoperator.Git.Tag)
 	if err == nil {
 		components = append(components, component)
 	}
-	component, err = getOscalComponentYaml(bigBangValues.Addons.Mattermost.Git.Repo, bigBangValues.Addons.Mattermost.Git.Tag)
+	component, err = oscal.GetOscalComponentDocumentFromRepo(bigBangValues.Addons.Mattermost.Git.Repo, bigBangValues.Addons.Mattermost.Git.Tag)
 	if err == nil {
 		components = append(components, component)
 	}
-	component, err = getOscalComponentYaml(bigBangValues.Addons.Velero.Git.Repo, bigBangValues.Addons.Velero.Git.Tag)
+	component, err = oscal.GetOscalComponentDocumentFromRepo(bigBangValues.Addons.Velero.Git.Repo, bigBangValues.Addons.Velero.Git.Tag)
 	if err == nil {
 		components = append(components, component)
 	}
-	component, err = getOscalComponentYaml(bigBangValues.Addons.Keycloak.Git.Repo, bigBangValues.Addons.Keycloak.Git.Tag)
+	component, err = oscal.GetOscalComponentDocumentFromRepo(bigBangValues.Addons.Keycloak.Git.Repo, bigBangValues.Addons.Keycloak.Git.Tag)
 	if err == nil {
 		components = append(components, component)
 	}
-	component, err = getOscalComponentYaml(bigBangValues.Addons.Vault.Git.Repo, bigBangValues.Addons.Vault.Git.Tag)
+	component, err = oscal.GetOscalComponentDocumentFromRepo(bigBangValues.Addons.Vault.Git.Repo, bigBangValues.Addons.Vault.Git.Tag)
 	if err == nil {
 		components = append(components, component)
 	}
@@ -972,28 +889,14 @@ func getAllOscalComponentDocuments() ([]OscalComponentDocument, error) {
 	return components, nil
 }
 
-func getOscalComponentYaml(repo string, tag string) (OscalComponentDocument, error) {
-	var component OscalComponentDocument
-	repo = strings.Replace(repo, ".git", "", -1)
-	rawUrl := fmt.Sprintf("%s/-/raw/%s/oscal-component.yaml", repo, tag)
-	uri, err := url.Parse(rawUrl)
-	if err != nil {
-		return component, err
-	}
-	bytes, err := fetchFromHTTPResource(uri)
-	if err != nil {
-		return component, err
-	}
-	err = yaml.Unmarshal(bytes, &component)
-	if err != nil {
-		return component, err
-	}
-	return component, nil
-}
-
 func getBigBangValues() (BigBangValues, error) {
 	var bbValues BigBangValues
-	bytes, err := getBigBangValuesYamlByes()
+	fileUrl := "https://repo1.dso.mil/platform-one/big-bang/bigbang/-/raw/master/chart/values.yaml"
+	uri, err := url.Parse(fileUrl)
+	if err != nil {
+		return bbValues, err
+	}
+	bytes, err := http.FetchFromHTTPResource(uri)
 	if err != nil {
 		return bbValues, err
 	}
@@ -1002,28 +905,4 @@ func getBigBangValues() (BigBangValues, error) {
 		return bbValues, err
 	}
 	return bbValues, nil
-}
-
-func getBigBangValuesYamlByes() ([]byte, error) {
-	fileUrl := "https://repo1.dso.mil/platform-one/big-bang/bigbang/-/raw/master/chart/values.yaml"
-	uri, err := url.Parse(fileUrl)
-	if err != nil {
-		return nil, fmt.Errorf("invalid URL pattern %v", err)
-	}
-	return fetchFromHTTPResource(uri)
-}
-
-func fetchFromHTTPResource(uri *url.URL) ([]byte, error) {
-	c := http.Client{Timeout: 10 * time.Second}
-	resp, err := c.Get(uri.String())
-	if err != nil {
-		return nil, err
-	}
-	defer resp.Body.Close()
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return nil, fmt.Errorf("cannot read response body %v", err)
-	}
-	return body, nil
-
 }
