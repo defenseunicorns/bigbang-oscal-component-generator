@@ -8,16 +8,18 @@ import (
 	"time"
 )
 
-func FetchFromHTTPResource(uri *url.URL) ([]byte, error) {
+// FetchFromHTTPResource downloads the file located at `uri` and returns the response code, the response body, and any
+// error.
+func FetchFromHTTPResource(uri *url.URL) (int, []byte, error) {
 	c := http.Client{Timeout: 10 * time.Second}
 	resp, err := c.Get(uri.String())
 	if err != nil {
-		return nil, err
+		return 0, nil, err
 	}
 	defer resp.Body.Close()
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		return nil, fmt.Errorf("cannot read response body %v", err)
+		return 0, nil, fmt.Errorf("cannot read response body %v", err)
 	}
-	return body, nil
+	return resp.StatusCode, body, nil
 }

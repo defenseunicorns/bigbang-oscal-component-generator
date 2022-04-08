@@ -67,12 +67,8 @@ type BigBangValues struct {
 	} `yaml:"networkPolicies"`
 	ImagePullPolicy string `yaml:"imagePullPolicy"`
 	Istio           struct {
-		Enabled bool `yaml:"enabled"`
-		Git     struct {
-			Repo string `yaml:"repo"`
-			Path string `yaml:"path"`
-			Tag  string `yaml:"tag"`
-		} `yaml:"git"`
+		Enabled         bool `yaml:"enabled"`
+		Git             Git  `yaml:"git"`
 		Enterprise      bool `yaml:"enterprise"`
 		IngressGateways struct {
 			PublicIngressgateway struct {
@@ -102,12 +98,8 @@ type BigBangValues struct {
 	} `yaml:"istio"`
 	Istiooperator struct {
 		Enabled bool `yaml:"enabled"`
-		Git     struct {
-			Repo string `yaml:"repo"`
-			Path string `yaml:"path"`
-			Tag  string `yaml:"tag"`
-		} `yaml:"git"`
-		Flux struct {
+		Git     Git  `yaml:"git"`
+		Flux    struct {
 		} `yaml:"flux"`
 		Values struct {
 		} `yaml:"values"`
@@ -115,12 +107,8 @@ type BigBangValues struct {
 	} `yaml:"istiooperator"`
 	Jaeger struct {
 		Enabled bool `yaml:"enabled"`
-		Git     struct {
-			Repo string `yaml:"repo"`
-			Path string `yaml:"path"`
-			Tag  string `yaml:"tag"`
-		} `yaml:"git"`
-		Flux struct {
+		Git     Git  `yaml:"git"`
+		Flux    struct {
 			Install struct {
 				Crds string `yaml:"crds"`
 			} `yaml:"install"`
@@ -142,12 +130,8 @@ type BigBangValues struct {
 	} `yaml:"jaeger"`
 	Kiali struct {
 		Enabled bool `yaml:"enabled"`
-		Git     struct {
-			Repo string `yaml:"repo"`
-			Path string `yaml:"path"`
-			Tag  string `yaml:"tag"`
-		} `yaml:"git"`
-		Flux struct {
+		Git     Git  `yaml:"git"`
+		Flux    struct {
 		} `yaml:"flux"`
 		Ingress struct {
 			Gateway string `yaml:"gateway"`
@@ -163,12 +147,8 @@ type BigBangValues struct {
 	} `yaml:"kiali"`
 	ClusterAuditor struct {
 		Enabled bool `yaml:"enabled"`
-		Git     struct {
-			Repo string `yaml:"repo"`
-			Path string `yaml:"path"`
-			Tag  string `yaml:"tag"`
-		} `yaml:"git"`
-		Flux struct {
+		Git     Git  `yaml:"git"`
+		Flux    struct {
 		} `yaml:"flux"`
 		Values struct {
 		} `yaml:"values"`
@@ -176,12 +156,8 @@ type BigBangValues struct {
 	} `yaml:"clusterAuditor"`
 	Gatekeeper struct {
 		Enabled bool `yaml:"enabled"`
-		Git     struct {
-			Repo string `yaml:"repo"`
-			Path string `yaml:"path"`
-			Tag  string `yaml:"tag"`
-		} `yaml:"git"`
-		Flux struct {
+		Git     Git  `yaml:"git"`
+		Flux    struct {
 			Install struct {
 				Crds string `yaml:"crds"`
 			} `yaml:"install"`
@@ -195,12 +171,8 @@ type BigBangValues struct {
 	} `yaml:"gatekeeper"`
 	Kyverno struct {
 		Enabled bool `yaml:"enabled"`
-		Git     struct {
-			Repo string `yaml:"repo"`
-			Path string `yaml:"path"`
-			Tag  string `yaml:"tag"`
-		} `yaml:"git"`
-		Flux struct {
+		Git     Git  `yaml:"git"`
+		Flux    struct {
 		} `yaml:"flux"`
 		Values struct {
 		} `yaml:"values"`
@@ -208,12 +180,8 @@ type BigBangValues struct {
 	} `yaml:"kyverno"`
 	Kyvernopolicies struct {
 		Enabled bool `yaml:"enabled"`
-		Git     struct {
-			Repo string `yaml:"repo"`
-			Path string `yaml:"path"`
-			Tag  string `yaml:"tag"`
-		} `yaml:"git"`
-		Flux struct {
+		Git     Git  `yaml:"git"`
+		Flux    struct {
 		} `yaml:"flux"`
 		Values struct {
 		} `yaml:"values"`
@@ -221,12 +189,8 @@ type BigBangValues struct {
 	} `yaml:"kyvernopolicies"`
 	Logging struct {
 		Enabled bool `yaml:"enabled"`
-		Git     struct {
-			Repo string `yaml:"repo"`
-			Path string `yaml:"path"`
-			Tag  string `yaml:"tag"`
-		} `yaml:"git"`
-		Flux struct {
+		Git     Git  `yaml:"git"`
+		Flux    struct {
 			Timeout string `yaml:"timeout"`
 		} `yaml:"flux"`
 		Ingress struct {
@@ -247,24 +211,16 @@ type BigBangValues struct {
 	} `yaml:"logging"`
 	Eckoperator struct {
 		Enabled bool `yaml:"enabled"`
-		Git     struct {
-			Repo string `yaml:"repo"`
-			Path string `yaml:"path"`
-			Tag  string `yaml:"tag"`
-		} `yaml:"git"`
-		Flux struct {
+		Git     Git  `yaml:"git"`
+		Flux    struct {
 		} `yaml:"flux"`
 		Values struct {
 		} `yaml:"values"`
 	} `yaml:"eckoperator"`
 	Fluentbit struct {
 		Enabled bool `yaml:"enabled"`
-		Git     struct {
-			Repo string `yaml:"repo"`
-			Path string `yaml:"path"`
-			Tag  string `yaml:"tag"`
-		} `yaml:"git"`
-		Flux struct {
+		Git     Git  `yaml:"git"`
+		Flux    struct {
 		} `yaml:"flux"`
 		Values struct {
 		} `yaml:"values"`
@@ -272,12 +228,8 @@ type BigBangValues struct {
 	} `yaml:"fluentbit"`
 	Promtail struct {
 		Enabled bool `yaml:"enabled"`
-		Git     struct {
-			Repo string `yaml:"repo"`
-			Path string `yaml:"path"`
-			Tag  string `yaml:"tag"`
-		} `yaml:"git"`
-		Flux struct {
+		Git     Git  `yaml:"git"`
+		Flux    struct {
 		} `yaml:"flux"`
 		Values struct {
 		} `yaml:"values"`
@@ -298,11 +250,7 @@ type BigBangValues struct {
 	} `yaml:"loki"`
 	Tempo struct {
 		Enabled bool `yaml:"enabled"`
-		Git     struct {
-			Repo string `yaml:"repo"`
-			Path string `yaml:"path"`
-			Tag  string `yaml:"tag"`
-		} `yaml:"git"`
+		Git     Git  `yaml:"git"`
 		Ingress struct {
 			Gateway string `yaml:"gateway"`
 		} `yaml:"ingress"`
@@ -314,12 +262,8 @@ type BigBangValues struct {
 	} `yaml:"tempo"`
 	Monitoring struct {
 		Enabled bool `yaml:"enabled"`
-		Git     struct {
-			Repo string `yaml:"repo"`
-			Path string `yaml:"path"`
-			Tag  string `yaml:"tag"`
-		} `yaml:"git"`
-		Flux struct {
+		Git     Git  `yaml:"git"`
+		Flux    struct {
 			Install struct {
 				Crds string `yaml:"crds"`
 			} `yaml:"install"`
@@ -354,12 +298,8 @@ type BigBangValues struct {
 	} `yaml:"monitoring"`
 	Twistlock struct {
 		Enabled bool `yaml:"enabled"`
-		Git     struct {
-			Repo string `yaml:"repo"`
-			Path string `yaml:"path"`
-			Tag  string `yaml:"tag"`
-		} `yaml:"git"`
-		Flux struct {
+		Git     Git  `yaml:"git"`
+		Flux    struct {
 		} `yaml:"flux"`
 		Ingress struct {
 			Gateway string `yaml:"gateway"`
@@ -371,12 +311,8 @@ type BigBangValues struct {
 	Addons struct {
 		Argocd struct {
 			Enabled bool `yaml:"enabled"`
-			Git     struct {
-				Repo string `yaml:"repo"`
-				Path string `yaml:"path"`
-				Tag  string `yaml:"tag"`
-			} `yaml:"git"`
-			Flux struct {
+			Git     Git  `yaml:"git"`
+			Flux    struct {
 			} `yaml:"flux"`
 			Ingress struct {
 				Gateway string `yaml:"gateway"`
@@ -398,12 +334,8 @@ type BigBangValues struct {
 		} `yaml:"argocd"`
 		Authservice struct {
 			Enabled bool `yaml:"enabled"`
-			Git     struct {
-				Repo string `yaml:"repo"`
-				Path string `yaml:"path"`
-				Tag  string `yaml:"tag"`
-			} `yaml:"git"`
-			Flux struct {
+			Git     Git  `yaml:"git"`
+			Flux    struct {
 			} `yaml:"flux"`
 			Values struct {
 			} `yaml:"values"`
@@ -413,12 +345,8 @@ type BigBangValues struct {
 		} `yaml:"authservice"`
 		MinioOperator struct {
 			Enabled bool `yaml:"enabled"`
-			Git     struct {
-				Repo string `yaml:"repo"`
-				Path string `yaml:"path"`
-				Tag  string `yaml:"tag"`
-			} `yaml:"git"`
-			Flux struct {
+			Git     Git  `yaml:"git"`
+			Flux    struct {
 			} `yaml:"flux"`
 			Values struct {
 			} `yaml:"values"`
@@ -426,12 +354,8 @@ type BigBangValues struct {
 		} `yaml:"minioOperator"`
 		Minio struct {
 			Enabled bool `yaml:"enabled"`
-			Git     struct {
-				Repo string `yaml:"repo"`
-				Path string `yaml:"path"`
-				Tag  string `yaml:"tag"`
-			} `yaml:"git"`
-			Flux struct {
+			Git     Git  `yaml:"git"`
+			Flux    struct {
 			} `yaml:"flux"`
 			Ingress struct {
 				Gateway string `yaml:"gateway"`
@@ -493,24 +417,16 @@ type BigBangValues struct {
 		} `yaml:"gitlab"`
 		GitlabRunner struct {
 			Enabled bool `yaml:"enabled"`
-			Git     struct {
-				Repo string `yaml:"repo"`
-				Path string `yaml:"path"`
-				Tag  string `yaml:"tag"`
-			} `yaml:"git"`
-			Flux struct {
+			Git     Git  `yaml:"git"`
+			Flux    struct {
 			} `yaml:"flux"`
 			Values struct {
 			} `yaml:"values"`
 			PostRenderers []interface{} `yaml:"postRenderers"`
 		} `yaml:"gitlabRunner"`
 		Nexus struct {
-			Enabled bool `yaml:"enabled"`
-			Git     struct {
-				Repo string `yaml:"repo"`
-				Path string `yaml:"path"`
-				Tag  string `yaml:"tag"`
-			} `yaml:"git"`
+			Enabled    bool   `yaml:"enabled"`
+			Git        Git    `yaml:"git"`
 			LicenseKey string `yaml:"license_key"`
 			Ingress    struct {
 				Gateway string `yaml:"gateway"`
@@ -542,12 +458,8 @@ type BigBangValues struct {
 		} `yaml:"nexus"`
 		Sonarqube struct {
 			Enabled bool `yaml:"enabled"`
-			Git     struct {
-				Repo string `yaml:"repo"`
-				Path string `yaml:"path"`
-				Tag  string `yaml:"tag"`
-			} `yaml:"git"`
-			Flux struct {
+			Git     Git  `yaml:"git"`
+			Flux    struct {
 			} `yaml:"flux"`
 			Ingress struct {
 				Gateway string `yaml:"gateway"`
@@ -590,12 +502,8 @@ type BigBangValues struct {
 		} `yaml:"haproxy"`
 		Anchore struct {
 			Enabled bool `yaml:"enabled"`
-			Git     struct {
-				Repo string `yaml:"repo"`
-				Path string `yaml:"path"`
-				Tag  string `yaml:"tag"`
-			} `yaml:"git"`
-			Flux struct {
+			Git     Git  `yaml:"git"`
+			Flux    struct {
 				Upgrade struct {
 					DisableWait bool `yaml:"disableWait"`
 				} `yaml:"upgrade"`
@@ -633,12 +541,8 @@ type BigBangValues struct {
 		} `yaml:"anchore"`
 		Mattermostoperator struct {
 			Enabled bool `yaml:"enabled"`
-			Git     struct {
-				Repo string `yaml:"repo"`
-				Path string `yaml:"path"`
-				Tag  string `yaml:"tag"`
-			} `yaml:"git"`
-			Flux struct {
+			Git     Git  `yaml:"git"`
+			Flux    struct {
 			} `yaml:"flux"`
 			Values struct {
 			} `yaml:"values"`
@@ -646,12 +550,8 @@ type BigBangValues struct {
 		} `yaml:"mattermostoperator"`
 		Mattermost struct {
 			Enabled bool `yaml:"enabled"`
-			Git     struct {
-				Repo string `yaml:"repo"`
-				Path string `yaml:"path"`
-				Tag  string `yaml:"tag"`
-			} `yaml:"git"`
-			Flux struct {
+			Git     Git  `yaml:"git"`
+			Flux    struct {
 			} `yaml:"flux"`
 			Enterprise struct {
 				Enabled bool   `yaml:"enabled"`
@@ -691,12 +591,8 @@ type BigBangValues struct {
 		} `yaml:"mattermost"`
 		Velero struct {
 			Enabled bool `yaml:"enabled"`
-			Git     struct {
-				Repo string `yaml:"repo"`
-				Path string `yaml:"path"`
-				Tag  string `yaml:"tag"`
-			} `yaml:"git"`
-			Flux struct {
+			Git     Git  `yaml:"git"`
+			Flux    struct {
 			} `yaml:"flux"`
 			Plugins []interface{} `yaml:"plugins"`
 			Values  struct {
@@ -704,12 +600,8 @@ type BigBangValues struct {
 			PostRenderers []interface{} `yaml:"postRenderers"`
 		} `yaml:"velero"`
 		Keycloak struct {
-			Enabled bool `yaml:"enabled"`
-			Git     struct {
-				Repo string `yaml:"repo"`
-				Path string `yaml:"path"`
-				Tag  string `yaml:"tag"`
-			} `yaml:"git"`
+			Enabled  bool `yaml:"enabled"`
+			Git      Git  `yaml:"git"`
 			Database struct {
 				Host     string `yaml:"host"`
 				Type     string `yaml:"type"`
@@ -730,12 +622,8 @@ type BigBangValues struct {
 		} `yaml:"keycloak"`
 		Vault struct {
 			Enabled bool `yaml:"enabled"`
-			Git     struct {
-				Repo string `yaml:"repo"`
-				Path string `yaml:"path"`
-				Tag  string `yaml:"tag"`
-			} `yaml:"git"`
-			Flux struct {
+			Git     Git  `yaml:"git"`
+			Flux    struct {
 			} `yaml:"flux"`
 			Ingress struct {
 				Gateway string `yaml:"gateway"`
@@ -745,6 +633,12 @@ type BigBangValues struct {
 			PostRenderers []interface{} `yaml:"postRenderers"`
 		} `yaml:"vault"`
 	} `yaml:"addons"`
+}
+
+type Git struct {
+	Repo string `yaml:"repo"`
+	Path string `yaml:"path,omitempty"`
+	Tag  string `yaml:"tag,omitempty"`
 }
 
 type OscalComponentDocument struct {

@@ -17,9 +17,12 @@ func GetOscalComponentDocumentFromRepo(repo string, tag string) (types.OscalComp
 	if err != nil {
 		return document, err
 	}
-	bytes, err := http.FetchFromHTTPResource(uri)
+	responseCode, bytes, err := http.FetchFromHTTPResource(uri)
 	if err != nil {
 		return document, err
+	}
+	if responseCode != 200 {
+		return document, fmt.Errorf("unexpected response code when downloading document: %v", responseCode)
 	}
 	err = yaml.Unmarshal(bytes, &document)
 	if err != nil {

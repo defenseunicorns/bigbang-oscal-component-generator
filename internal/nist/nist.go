@@ -2,7 +2,6 @@ package nist
 
 import (
 	"github.com/defenseunicorns/bigbang-oscal-component-generator/internal/http"
-	"golang.org/x/exp/slices"
 	"gopkg.in/yaml.v2"
 	"net/url"
 )
@@ -196,6 +195,6 @@ func LoadNist80053Catalog() (Nist80053Catalog, error) {
 	return catalog, nil
 }
 
-func GetLabelByControlId(catalog *Nist80053Catalog, controlId string) (string, error) {
-	idx := slices.IndexFunc(catalog.Catalog.Groups, func(c Config) bool { return c.Key == "key1" })
-}
+//func GetLabelByControlId(catalog *Nist80053Catalog, controlId string) (string, error) {
+//	idx := slices.IndexFunc(catalog.Catalog.Groups, func(c Config) bool { return c.Key == "key1" })
+//}
