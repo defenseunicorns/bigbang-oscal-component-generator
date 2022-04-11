@@ -11,6 +11,8 @@ import (
 	"reflect"
 )
 
+// GetAllBigBangSubchartOscalComponentDocuments parses the Big Bang chart's values.yaml file (in the master branch) to
+// find all subchart git references, collects all the oscal-component.yaml files, and returns them in an array
 func GetAllBigBangSubchartOscalComponentDocuments() ([]types.OscalComponentDocument, error) {
 	var documents []types.OscalComponentDocument
 	bigBangValues, err := getBigBangValues()
