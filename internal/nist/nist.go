@@ -1,10 +1,23 @@
 package nist
 
 import (
+	"fmt"
+	"log"
+	"net/url"
+
 	"github.com/defenseunicorns/bigbang-oscal-component-generator/internal/http"
 	"gopkg.in/yaml.v2"
-	"net/url"
 )
+
+var NIST80053 Nist80053Catalog
+
+func init() {
+	var err error
+	NIST80053, err = LoadNist80053Catalog()
+	if err != nil {
+		log.Fatal(err)
+	}
+}
 
 type Nist80053Catalog struct {
 	Catalog struct {
@@ -193,6 +206,18 @@ func LoadNist80053Catalog() (Nist80053Catalog, error) {
 		return catalog, err
 	}
 	return catalog, nil
+}
+
+// GetControlInformationFromControlID returns the control Title and the control Information
+func GetControlInformationFromControlID(id string) (string, string, error) {
+	for _, group := range NIST80053.Catalog.Groups {
+		for _, control := range group.Controls {
+			if control.ID == id {
+				return group.Title, control.Parts[0].Prose, nil
+			}
+		}
+	}
+	return "", "", fmt.Errorf("Control ID %v not found", id)
 }
 
 //func GetLabelByControlId(catalog *Nist80053Catalog, controlId string) (string, error) {
