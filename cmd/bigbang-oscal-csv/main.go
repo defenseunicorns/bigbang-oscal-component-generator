@@ -139,28 +139,6 @@ func ComponentToEMassRecord(c types.OscalComponent) [][]string {
 	return records
 }
 
-type eMASSRecord struct {
-	ControlId                  string `csv:"Control Acronym"`
-	ControlTitle               string `csv:"Control Title"`
-	ControlInformation         string `csv:"Control Information"`
-	ComplianceStatus           string `csv:"Compliance Status"`
-	ImplementationStatus       string `csv:"Implementation Status"`
-	CommonControlProvider      string `csv:"Common Control Provider"`
-	SecurityControlDesignation string `csv:"SecirtyControlDesignation"`
-	TestMethod                 string `csv:"Test Method"`
-	NAJustification            string `csv:"N/A Justification`
-	EstimatedCompletionData    string `csv:"Estimated Completion Date"`
-	ImplementationNarrative    string `csv:"Implementation Narrative"`
-	ResponsibleEntities        string `csv:"ResponsibleEntities"`
-	IM                         string `csv:""`
-	Criticality                string `csv:"Criticality"`
-	Frequency                  string `csv:"Constantly"`
-	Method                     string `csv:"Method"`
-	Reporting                  string `csv:"Reporting"`
-	Tracking                   string `csv:"Tracking"`
-	SLCMComments               string `csv:"SLCM Comments"`
-}
-
 //func buildCsvDocument() (string, error) {
 //	var bigBangOscalDocument oscal.OscalComponentDocument
 //	var components []oscal.OscalComponent

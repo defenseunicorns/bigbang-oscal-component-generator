@@ -647,7 +647,7 @@ type OscalComponentDocument struct {
 		Metadata struct {
 			Title        string    `yaml:"title"`
 			LastModified time.Time `yaml:"last-modified"`
-			Version      int       `yaml:"version"`
+			Version      string    `yaml:"version"`
 			OscalVersion string    `yaml:"oscal-version"`
 			Parties      []struct {
 				UUID  string `yaml:"uuid"`

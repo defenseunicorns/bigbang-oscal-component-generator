@@ -2,8 +2,9 @@ package main
 
 import (
 	"fmt"
-	"github.com/defenseunicorns/bigbang-oscal-component-generator/pkg/bigbangoscal"
 	"log"
+
+	"github.com/defenseunicorns/bigbang-oscal-component-generator/pkg/bigbangoscal"
 )
 
 func main() {

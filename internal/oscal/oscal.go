@@ -2,17 +2,19 @@ package oscal
 
 import (
 	"fmt"
+	"net/url"
+	"strings"
+
 	"github.com/defenseunicorns/bigbang-oscal-component-generator/internal/http"
 	"github.com/defenseunicorns/bigbang-oscal-component-generator/internal/types"
 	"gopkg.in/yaml.v2"
-	"net/url"
-	"strings"
 )
 
 func GetOscalComponentDocumentFromRepo(repo string, tag string) (types.OscalComponentDocument, error) {
 	var document types.OscalComponentDocument
 	repo = strings.Replace(repo, ".git", "", -1)
 	rawUrl := fmt.Sprintf("%s/-/raw/%s/oscal-component.yaml", repo, tag)
+	fmt.Println(rawUrl)
 	uri, err := url.Parse(rawUrl)
 	if err != nil {
 		return document, err

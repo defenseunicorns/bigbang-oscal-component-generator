@@ -9,6 +9,8 @@ import (
 func BuildBigBangOscalDocument() (string, error) {
 	var bigBangOscalDocument types.OscalComponentDocument
 	var components []types.OscalComponent
+
+	bigBangOscalDocument.ComponentDefinition.Metadata.Title = "Big Bang"
 	documents, err := bigbang.GetAllBigBangSubchartOscalComponentDocuments()
 	if err != nil {
 		return "", err
