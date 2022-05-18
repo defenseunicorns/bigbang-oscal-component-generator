@@ -14,7 +14,6 @@ func GetOscalComponentDocumentFromRepo(repo string, tag string) (types.OscalComp
 	var document types.OscalComponentDocument
 	repo = strings.Replace(repo, ".git", "", -1)
 	rawUrl := fmt.Sprintf("%s/-/raw/%s/oscal-component.yaml", repo, tag)
-	fmt.Println(rawUrl)
 	uri, err := url.Parse(rawUrl)
 	if err != nil {
 		return document, err
