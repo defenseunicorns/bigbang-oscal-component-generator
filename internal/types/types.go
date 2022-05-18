@@ -1,15 +1,6 @@
-package yaml
+package types
 
-import (
-	"fmt"
-	"io/ioutil"
-	"net/http"
-	"net/url"
-	"strings"
-	"time"
-
-	"gopkg.in/yaml.v2"
-)
+import "time"
 
 type BigBangValues struct {
 	Domain              string `yaml:"domain"`
@@ -76,12 +67,8 @@ type BigBangValues struct {
 	} `yaml:"networkPolicies"`
 	ImagePullPolicy string `yaml:"imagePullPolicy"`
 	Istio           struct {
-		Enabled bool `yaml:"enabled"`
-		Git     struct {
-			Repo string `yaml:"repo"`
-			Path string `yaml:"path"`
-			Tag  string `yaml:"tag"`
-		} `yaml:"git"`
+		Enabled         bool `yaml:"enabled"`
+		Git             Git  `yaml:"git"`
 		Enterprise      bool `yaml:"enterprise"`
 		IngressGateways struct {
 			PublicIngressgateway struct {
@@ -111,12 +98,8 @@ type BigBangValues struct {
 	} `yaml:"istio"`
 	Istiooperator struct {
 		Enabled bool `yaml:"enabled"`
-		Git     struct {
-			Repo string `yaml:"repo"`
-			Path string `yaml:"path"`
-			Tag  string `yaml:"tag"`
-		} `yaml:"git"`
-		Flux struct {
+		Git     Git  `yaml:"git"`
+		Flux    struct {
 		} `yaml:"flux"`
 		Values struct {
 		} `yaml:"values"`
@@ -124,12 +107,8 @@ type BigBangValues struct {
 	} `yaml:"istiooperator"`
 	Jaeger struct {
 		Enabled bool `yaml:"enabled"`
-		Git     struct {
-			Repo string `yaml:"repo"`
-			Path string `yaml:"path"`
-			Tag  string `yaml:"tag"`
-		} `yaml:"git"`
-		Flux struct {
+		Git     Git  `yaml:"git"`
+		Flux    struct {
 			Install struct {
 				Crds string `yaml:"crds"`
 			} `yaml:"install"`
@@ -151,12 +130,8 @@ type BigBangValues struct {
 	} `yaml:"jaeger"`
 	Kiali struct {
 		Enabled bool `yaml:"enabled"`
-		Git     struct {
-			Repo string `yaml:"repo"`
-			Path string `yaml:"path"`
-			Tag  string `yaml:"tag"`
-		} `yaml:"git"`
-		Flux struct {
+		Git     Git  `yaml:"git"`
+		Flux    struct {
 		} `yaml:"flux"`
 		Ingress struct {
 			Gateway string `yaml:"gateway"`
@@ -172,12 +147,8 @@ type BigBangValues struct {
 	} `yaml:"kiali"`
 	ClusterAuditor struct {
 		Enabled bool `yaml:"enabled"`
-		Git     struct {
-			Repo string `yaml:"repo"`
-			Path string `yaml:"path"`
-			Tag  string `yaml:"tag"`
-		} `yaml:"git"`
-		Flux struct {
+		Git     Git  `yaml:"git"`
+		Flux    struct {
 		} `yaml:"flux"`
 		Values struct {
 		} `yaml:"values"`
@@ -185,12 +156,8 @@ type BigBangValues struct {
 	} `yaml:"clusterAuditor"`
 	Gatekeeper struct {
 		Enabled bool `yaml:"enabled"`
-		Git     struct {
-			Repo string `yaml:"repo"`
-			Path string `yaml:"path"`
-			Tag  string `yaml:"tag"`
-		} `yaml:"git"`
-		Flux struct {
+		Git     Git  `yaml:"git"`
+		Flux    struct {
 			Install struct {
 				Crds string `yaml:"crds"`
 			} `yaml:"install"`
@@ -204,12 +171,8 @@ type BigBangValues struct {
 	} `yaml:"gatekeeper"`
 	Kyverno struct {
 		Enabled bool `yaml:"enabled"`
-		Git     struct {
-			Repo string `yaml:"repo"`
-			Path string `yaml:"path"`
-			Tag  string `yaml:"tag"`
-		} `yaml:"git"`
-		Flux struct {
+		Git     Git  `yaml:"git"`
+		Flux    struct {
 		} `yaml:"flux"`
 		Values struct {
 		} `yaml:"values"`
@@ -217,12 +180,8 @@ type BigBangValues struct {
 	} `yaml:"kyverno"`
 	Kyvernopolicies struct {
 		Enabled bool `yaml:"enabled"`
-		Git     struct {
-			Repo string `yaml:"repo"`
-			Path string `yaml:"path"`
-			Tag  string `yaml:"tag"`
-		} `yaml:"git"`
-		Flux struct {
+		Git     Git  `yaml:"git"`
+		Flux    struct {
 		} `yaml:"flux"`
 		Values struct {
 		} `yaml:"values"`
@@ -230,12 +189,8 @@ type BigBangValues struct {
 	} `yaml:"kyvernopolicies"`
 	Logging struct {
 		Enabled bool `yaml:"enabled"`
-		Git     struct {
-			Repo string `yaml:"repo"`
-			Path string `yaml:"path"`
-			Tag  string `yaml:"tag"`
-		} `yaml:"git"`
-		Flux struct {
+		Git     Git  `yaml:"git"`
+		Flux    struct {
 			Timeout string `yaml:"timeout"`
 		} `yaml:"flux"`
 		Ingress struct {
@@ -256,24 +211,16 @@ type BigBangValues struct {
 	} `yaml:"logging"`
 	Eckoperator struct {
 		Enabled bool `yaml:"enabled"`
-		Git     struct {
-			Repo string `yaml:"repo"`
-			Path string `yaml:"path"`
-			Tag  string `yaml:"tag"`
-		} `yaml:"git"`
-		Flux struct {
+		Git     Git  `yaml:"git"`
+		Flux    struct {
 		} `yaml:"flux"`
 		Values struct {
 		} `yaml:"values"`
 	} `yaml:"eckoperator"`
 	Fluentbit struct {
 		Enabled bool `yaml:"enabled"`
-		Git     struct {
-			Repo string `yaml:"repo"`
-			Path string `yaml:"path"`
-			Tag  string `yaml:"tag"`
-		} `yaml:"git"`
-		Flux struct {
+		Git     Git  `yaml:"git"`
+		Flux    struct {
 		} `yaml:"flux"`
 		Values struct {
 		} `yaml:"values"`
@@ -281,12 +228,8 @@ type BigBangValues struct {
 	} `yaml:"fluentbit"`
 	Promtail struct {
 		Enabled bool `yaml:"enabled"`
-		Git     struct {
-			Repo string `yaml:"repo"`
-			Path string `yaml:"path"`
-			Tag  string `yaml:"tag"`
-		} `yaml:"git"`
-		Flux struct {
+		Git     Git  `yaml:"git"`
+		Flux    struct {
 		} `yaml:"flux"`
 		Values struct {
 		} `yaml:"values"`
@@ -307,11 +250,7 @@ type BigBangValues struct {
 	} `yaml:"loki"`
 	Tempo struct {
 		Enabled bool `yaml:"enabled"`
-		Git     struct {
-			Repo string `yaml:"repo"`
-			Path string `yaml:"path"`
-			Tag  string `yaml:"tag"`
-		} `yaml:"git"`
+		Git     Git  `yaml:"git"`
 		Ingress struct {
 			Gateway string `yaml:"gateway"`
 		} `yaml:"ingress"`
@@ -323,12 +262,8 @@ type BigBangValues struct {
 	} `yaml:"tempo"`
 	Monitoring struct {
 		Enabled bool `yaml:"enabled"`
-		Git     struct {
-			Repo string `yaml:"repo"`
-			Path string `yaml:"path"`
-			Tag  string `yaml:"tag"`
-		} `yaml:"git"`
-		Flux struct {
+		Git     Git  `yaml:"git"`
+		Flux    struct {
 			Install struct {
 				Crds string `yaml:"crds"`
 			} `yaml:"install"`
@@ -363,12 +298,8 @@ type BigBangValues struct {
 	} `yaml:"monitoring"`
 	Twistlock struct {
 		Enabled bool `yaml:"enabled"`
-		Git     struct {
-			Repo string `yaml:"repo"`
-			Path string `yaml:"path"`
-			Tag  string `yaml:"tag"`
-		} `yaml:"git"`
-		Flux struct {
+		Git     Git  `yaml:"git"`
+		Flux    struct {
 		} `yaml:"flux"`
 		Ingress struct {
 			Gateway string `yaml:"gateway"`
@@ -380,12 +311,8 @@ type BigBangValues struct {
 	Addons struct {
 		Argocd struct {
 			Enabled bool `yaml:"enabled"`
-			Git     struct {
-				Repo string `yaml:"repo"`
-				Path string `yaml:"path"`
-				Tag  string `yaml:"tag"`
-			} `yaml:"git"`
-			Flux struct {
+			Git     Git  `yaml:"git"`
+			Flux    struct {
 			} `yaml:"flux"`
 			Ingress struct {
 				Gateway string `yaml:"gateway"`
@@ -407,12 +334,8 @@ type BigBangValues struct {
 		} `yaml:"argocd"`
 		Authservice struct {
 			Enabled bool `yaml:"enabled"`
-			Git     struct {
-				Repo string `yaml:"repo"`
-				Path string `yaml:"path"`
-				Tag  string `yaml:"tag"`
-			} `yaml:"git"`
-			Flux struct {
+			Git     Git  `yaml:"git"`
+			Flux    struct {
 			} `yaml:"flux"`
 			Values struct {
 			} `yaml:"values"`
@@ -422,12 +345,8 @@ type BigBangValues struct {
 		} `yaml:"authservice"`
 		MinioOperator struct {
 			Enabled bool `yaml:"enabled"`
-			Git     struct {
-				Repo string `yaml:"repo"`
-				Path string `yaml:"path"`
-				Tag  string `yaml:"tag"`
-			} `yaml:"git"`
-			Flux struct {
+			Git     Git  `yaml:"git"`
+			Flux    struct {
 			} `yaml:"flux"`
 			Values struct {
 			} `yaml:"values"`
@@ -435,12 +354,8 @@ type BigBangValues struct {
 		} `yaml:"minioOperator"`
 		Minio struct {
 			Enabled bool `yaml:"enabled"`
-			Git     struct {
-				Repo string `yaml:"repo"`
-				Path string `yaml:"path"`
-				Tag  string `yaml:"tag"`
-			} `yaml:"git"`
-			Flux struct {
+			Git     Git  `yaml:"git"`
+			Flux    struct {
 			} `yaml:"flux"`
 			Ingress struct {
 				Gateway string `yaml:"gateway"`
@@ -502,24 +417,16 @@ type BigBangValues struct {
 		} `yaml:"gitlab"`
 		GitlabRunner struct {
 			Enabled bool `yaml:"enabled"`
-			Git     struct {
-				Repo string `yaml:"repo"`
-				Path string `yaml:"path"`
-				Tag  string `yaml:"tag"`
-			} `yaml:"git"`
-			Flux struct {
+			Git     Git  `yaml:"git"`
+			Flux    struct {
 			} `yaml:"flux"`
 			Values struct {
 			} `yaml:"values"`
 			PostRenderers []interface{} `yaml:"postRenderers"`
 		} `yaml:"gitlabRunner"`
 		Nexus struct {
-			Enabled bool `yaml:"enabled"`
-			Git     struct {
-				Repo string `yaml:"repo"`
-				Path string `yaml:"path"`
-				Tag  string `yaml:"tag"`
-			} `yaml:"git"`
+			Enabled    bool   `yaml:"enabled"`
+			Git        Git    `yaml:"git"`
 			LicenseKey string `yaml:"license_key"`
 			Ingress    struct {
 				Gateway string `yaml:"gateway"`
@@ -551,12 +458,8 @@ type BigBangValues struct {
 		} `yaml:"nexus"`
 		Sonarqube struct {
 			Enabled bool `yaml:"enabled"`
-			Git     struct {
-				Repo string `yaml:"repo"`
-				Path string `yaml:"path"`
-				Tag  string `yaml:"tag"`
-			} `yaml:"git"`
-			Flux struct {
+			Git     Git  `yaml:"git"`
+			Flux    struct {
 			} `yaml:"flux"`
 			Ingress struct {
 				Gateway string `yaml:"gateway"`
@@ -599,12 +502,8 @@ type BigBangValues struct {
 		} `yaml:"haproxy"`
 		Anchore struct {
 			Enabled bool `yaml:"enabled"`
-			Git     struct {
-				Repo string `yaml:"repo"`
-				Path string `yaml:"path"`
-				Tag  string `yaml:"tag"`
-			} `yaml:"git"`
-			Flux struct {
+			Git     Git  `yaml:"git"`
+			Flux    struct {
 				Upgrade struct {
 					DisableWait bool `yaml:"disableWait"`
 				} `yaml:"upgrade"`
@@ -642,12 +541,8 @@ type BigBangValues struct {
 		} `yaml:"anchore"`
 		Mattermostoperator struct {
 			Enabled bool `yaml:"enabled"`
-			Git     struct {
-				Repo string `yaml:"repo"`
-				Path string `yaml:"path"`
-				Tag  string `yaml:"tag"`
-			} `yaml:"git"`
-			Flux struct {
+			Git     Git  `yaml:"git"`
+			Flux    struct {
 			} `yaml:"flux"`
 			Values struct {
 			} `yaml:"values"`
@@ -655,12 +550,8 @@ type BigBangValues struct {
 		} `yaml:"mattermostoperator"`
 		Mattermost struct {
 			Enabled bool `yaml:"enabled"`
-			Git     struct {
-				Repo string `yaml:"repo"`
-				Path string `yaml:"path"`
-				Tag  string `yaml:"tag"`
-			} `yaml:"git"`
-			Flux struct {
+			Git     Git  `yaml:"git"`
+			Flux    struct {
 			} `yaml:"flux"`
 			Enterprise struct {
 				Enabled bool   `yaml:"enabled"`
@@ -700,12 +591,8 @@ type BigBangValues struct {
 		} `yaml:"mattermost"`
 		Velero struct {
 			Enabled bool `yaml:"enabled"`
-			Git     struct {
-				Repo string `yaml:"repo"`
-				Path string `yaml:"path"`
-				Tag  string `yaml:"tag"`
-			} `yaml:"git"`
-			Flux struct {
+			Git     Git  `yaml:"git"`
+			Flux    struct {
 			} `yaml:"flux"`
 			Plugins []interface{} `yaml:"plugins"`
 			Values  struct {
@@ -713,12 +600,8 @@ type BigBangValues struct {
 			PostRenderers []interface{} `yaml:"postRenderers"`
 		} `yaml:"velero"`
 		Keycloak struct {
-			Enabled bool `yaml:"enabled"`
-			Git     struct {
-				Repo string `yaml:"repo"`
-				Path string `yaml:"path"`
-				Tag  string `yaml:"tag"`
-			} `yaml:"git"`
+			Enabled  bool `yaml:"enabled"`
+			Git      Git  `yaml:"git"`
 			Database struct {
 				Host     string `yaml:"host"`
 				Type     string `yaml:"type"`
@@ -739,12 +622,8 @@ type BigBangValues struct {
 		} `yaml:"keycloak"`
 		Vault struct {
 			Enabled bool `yaml:"enabled"`
-			Git     struct {
-				Repo string `yaml:"repo"`
-				Path string `yaml:"path"`
-				Tag  string `yaml:"tag"`
-			} `yaml:"git"`
-			Flux struct {
+			Git     Git  `yaml:"git"`
+			Flux    struct {
 			} `yaml:"flux"`
 			Ingress struct {
 				Gateway string `yaml:"gateway"`
@@ -756,13 +635,19 @@ type BigBangValues struct {
 	} `yaml:"addons"`
 }
 
+type Git struct {
+	Repo string `yaml:"repo"`
+	Path string `yaml:"path,omitempty"`
+	Tag  string `yaml:"tag,omitempty"`
+}
+
 type OscalComponentDocument struct {
 	ComponentDefinition struct {
 		UUID     string `yaml:"uuid"`
 		Metadata struct {
 			Title        string    `yaml:"title"`
 			LastModified time.Time `yaml:"last-modified"`
-			Version      int       `yaml:"version"`
+			Version      string    `yaml:"version"`
 			OscalVersion string    `yaml:"oscal-version"`
 			Parties      []struct {
 				UUID  string `yaml:"uuid"`
@@ -807,223 +692,4 @@ type OscalComponent struct {
 			Description string `yaml:"description"`
 		} `yaml:"implemented-requirements"`
 	} `yaml:"control-implementations"`
-}
-
-func BuildBigBangOscalComponentDocument() (string, error) {
-	var document OscalComponentDocument
-	components, err := getAllOscalComponents()
-	if err != nil {
-		return "", err
-	}
-	document.ComponentDefinition.Components = components
-	bytes, err := yaml.Marshal(&document)
-	if err != nil {
-		return "", err
-	}
-	return string(bytes), nil
-}
-
-func getAllOscalComponents() ([]OscalComponent, error) {
-	var components []OscalComponent
-	documents, err := getAllOscalComponentDocuments()
-	if err != nil {
-		return nil, err
-	}
-	for _, document := range documents {
-		components = append(components, document.ComponentDefinition.Components...)
-	}
-	return components, nil
-}
-
-func getAllOscalComponentDocuments() ([]OscalComponentDocument, error) {
-	var components []OscalComponentDocument
-	bigBangValues, err := getBigBangValues()
-	if err != nil {
-		return nil, err
-	}
-	// Core
-	component, err := getOscalComponentYaml(bigBangValues.Istio.Git.Repo, bigBangValues.Istio.Git.Tag)
-	if err == nil {
-		components = append(components, component)
-	}
-	component, err = getOscalComponentYaml(bigBangValues.Istiooperator.Git.Repo, bigBangValues.Istiooperator.Git.Tag)
-	if err == nil {
-		components = append(components, component)
-	}
-	component, err = getOscalComponentYaml(bigBangValues.Jaeger.Git.Repo, bigBangValues.Jaeger.Git.Tag)
-	if err == nil {
-		components = append(components, component)
-	}
-	component, err = getOscalComponentYaml(bigBangValues.Kiali.Git.Repo, bigBangValues.Kiali.Git.Tag)
-	if err == nil {
-		components = append(components, component)
-	}
-	component, err = getOscalComponentYaml(bigBangValues.ClusterAuditor.Git.Repo, bigBangValues.ClusterAuditor.Git.Tag)
-	if err == nil {
-		components = append(components, component)
-	}
-	component, err = getOscalComponentYaml(bigBangValues.Gatekeeper.Git.Repo, bigBangValues.Gatekeeper.Git.Tag)
-	if err == nil {
-		components = append(components, component)
-	}
-	component, err = getOscalComponentYaml(bigBangValues.Kyverno.Git.Repo, bigBangValues.Kyverno.Git.Tag)
-	if err == nil {
-		components = append(components, component)
-	}
-	component, err = getOscalComponentYaml(bigBangValues.Kyvernopolicies.Git.Repo, bigBangValues.Kyvernopolicies.Git.Tag)
-	if err == nil {
-		components = append(components, component)
-	}
-	component, err = getOscalComponentYaml(bigBangValues.Logging.Git.Repo, bigBangValues.Logging.Git.Tag)
-	if err == nil {
-		components = append(components, component)
-	}
-	component, err = getOscalComponentYaml(bigBangValues.Eckoperator.Git.Repo, bigBangValues.Eckoperator.Git.Tag)
-	if err == nil {
-		components = append(components, component)
-	}
-	component, err = getOscalComponentYaml(bigBangValues.Fluentbit.Git.Repo, bigBangValues.Fluentbit.Git.Tag)
-	if err == nil {
-		components = append(components, component)
-	}
-	component, err = getOscalComponentYaml(bigBangValues.Promtail.Git.Repo, bigBangValues.Promtail.Git.Tag)
-	if err == nil {
-		components = append(components, component)
-	}
-	component, err = getOscalComponentYaml(bigBangValues.Loki.Git.Repo, bigBangValues.Loki.Git.Tag)
-	if err == nil {
-		components = append(components, component)
-	}
-	component, err = getOscalComponentYaml(bigBangValues.Tempo.Git.Repo, bigBangValues.Tempo.Git.Tag)
-	if err == nil {
-		components = append(components, component)
-	}
-	component, err = getOscalComponentYaml(bigBangValues.Monitoring.Git.Repo, bigBangValues.Monitoring.Git.Tag)
-	if err == nil {
-		components = append(components, component)
-	}
-	component, err = getOscalComponentYaml(bigBangValues.Twistlock.Git.Repo, bigBangValues.Twistlock.Git.Tag)
-	if err == nil {
-		components = append(components, component)
-	}
-
-	// Addons
-	component, err = getOscalComponentYaml(bigBangValues.Addons.Argocd.Git.Repo, bigBangValues.Addons.Argocd.Git.Tag)
-	if err == nil {
-		components = append(components, component)
-	}
-	component, err = getOscalComponentYaml(bigBangValues.Addons.Authservice.Git.Repo, bigBangValues.Addons.Authservice.Git.Tag)
-	if err == nil {
-		components = append(components, component)
-	}
-	component, err = getOscalComponentYaml(bigBangValues.Addons.MinioOperator.Git.Repo, bigBangValues.Addons.MinioOperator.Git.Tag)
-	if err == nil {
-		components = append(components, component)
-	}
-	component, err = getOscalComponentYaml(bigBangValues.Addons.Minio.Git.Repo, bigBangValues.Addons.Minio.Git.Tag)
-	if err == nil {
-		components = append(components, component)
-	}
-	component, err = getOscalComponentYaml(bigBangValues.Addons.Gitlab.Git.Repo, bigBangValues.Addons.Gitlab.Git.Tag)
-	if err == nil {
-		components = append(components, component)
-	}
-	component, err = getOscalComponentYaml(bigBangValues.Addons.GitlabRunner.Git.Repo, bigBangValues.Addons.GitlabRunner.Git.Tag)
-	if err == nil {
-		components = append(components, component)
-	}
-	component, err = getOscalComponentYaml(bigBangValues.Addons.Nexus.Git.Repo, bigBangValues.Addons.Nexus.Git.Tag)
-	if err == nil {
-		components = append(components, component)
-	}
-	component, err = getOscalComponentYaml(bigBangValues.Addons.Sonarqube.Git.Repo, bigBangValues.Addons.Sonarqube.Git.Tag)
-	if err == nil {
-		components = append(components, component)
-	}
-	component, err = getOscalComponentYaml(bigBangValues.Addons.Haproxy.Git.Repo, bigBangValues.Addons.Haproxy.Git.Tag)
-	if err == nil {
-		components = append(components, component)
-	}
-	component, err = getOscalComponentYaml(bigBangValues.Addons.Anchore.Git.Repo, bigBangValues.Addons.Anchore.Git.Tag)
-	if err == nil {
-		components = append(components, component)
-	}
-	component, err = getOscalComponentYaml(bigBangValues.Addons.Mattermostoperator.Git.Repo, bigBangValues.Addons.Mattermostoperator.Git.Tag)
-	if err == nil {
-		components = append(components, component)
-	}
-	component, err = getOscalComponentYaml(bigBangValues.Addons.Mattermost.Git.Repo, bigBangValues.Addons.Mattermost.Git.Tag)
-	if err == nil {
-		components = append(components, component)
-	}
-	component, err = getOscalComponentYaml(bigBangValues.Addons.Velero.Git.Repo, bigBangValues.Addons.Velero.Git.Tag)
-	if err == nil {
-		components = append(components, component)
-	}
-	component, err = getOscalComponentYaml(bigBangValues.Addons.Keycloak.Git.Repo, bigBangValues.Addons.Keycloak.Git.Tag)
-	if err == nil {
-		components = append(components, component)
-	}
-	component, err = getOscalComponentYaml(bigBangValues.Addons.Vault.Git.Repo, bigBangValues.Addons.Vault.Git.Tag)
-	if err == nil {
-		components = append(components, component)
-	}
-
-	return components, nil
-}
-
-func getOscalComponentYaml(repo string, tag string) (OscalComponentDocument, error) {
-	var component OscalComponentDocument
-	repo = strings.Replace(repo, ".git", "", -1)
-	rawUrl := fmt.Sprintf("%s/-/raw/%s/oscal-component.yaml", repo, tag)
-	uri, err := url.Parse(rawUrl)
-	if err != nil {
-		return component, err
-	}
-	bytes, err := fetchFromHTTPResource(uri)
-	if err != nil {
-		return component, err
-	}
-	err = yaml.Unmarshal(bytes, &component)
-	if err != nil {
-		return component, err
-	}
-	return component, nil
-}
-
-func getBigBangValues() (BigBangValues, error) {
-	var bbValues BigBangValues
-	bytes, err := getBigBangValuesYamlByes()
-	if err != nil {
-		return bbValues, err
-	}
-	err = yaml.Unmarshal(bytes, &bbValues)
-	if err != nil {
-		return bbValues, err
-	}
-	return bbValues, nil
-}
-
-func getBigBangValuesYamlByes() ([]byte, error) {
-	fileUrl := "https://repo1.dso.mil/platform-one/big-bang/bigbang/-/raw/master/chart/values.yaml"
-	uri, err := url.Parse(fileUrl)
-	if err != nil {
-		return nil, fmt.Errorf("invalid URL pattern %v", err)
-	}
-	return fetchFromHTTPResource(uri)
-}
-
-func fetchFromHTTPResource(uri *url.URL) ([]byte, error) {
-	c := http.Client{Timeout: 10 * time.Second}
-	resp, err := c.Get(uri.String())
-	if err != nil {
-		return nil, err
-	}
-	defer resp.Body.Close()
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return nil, fmt.Errorf("cannot read response body %v", err)
-	}
-	return body, nil
-
 }
