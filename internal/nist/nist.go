@@ -197,7 +197,7 @@ func LoadNist80053Catalog() (Nist80053Catalog, error) {
 	if err != nil {
 		return catalog, err
 	}
-	bytes, err := http.FetchFromHTTPResource(uri)
+	_, bytes, err := http.FetchFromHTTPResource(uri)
 	if err != nil {
 		return catalog, err
 	}

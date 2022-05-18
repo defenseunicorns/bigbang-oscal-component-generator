@@ -23,11 +23,11 @@ func init() {
 
 // GetAllBigBangSubchartOscalComponentDocuments parses the Big Bang chart's values.yaml file (in the master branch) to
 // find all subchart git references, collects all the oscal-component.yaml files, and returns them in an array
-func GetAllBigBangSubchartOscalComponentDocuments() ([]types.OscalComponentDocument, error) {
+func GetAllBigBangSubchartOscalComponentDocuments() ([]types.OscalComponentDocument, string, error) {
 	var documents []types.OscalComponentDocument
-	bigBangValues, err := getBigBangValues()
+	bigBangValues, version, err := getBigBangValues()
 	if err != nil {
-		return nil, err
+		return nil, "", err
 	}
 	gits := getAllSubchartGitSections(bigBangValues)
 	for _, git := range gits {
@@ -40,41 +40,66 @@ func GetAllBigBangSubchartOscalComponentDocuments() ([]types.OscalComponentDocum
 		documents = append(documents, document)
 	}
 
-	return documents, nil
+	return documents, version, nil
 }
 
-func getBigBangValues() (types.BigBangValues, error) {
+func getBigBangValues() (types.BigBangValues, string, error) {
 
 	if !flag.Parsed() {
 		flag.Parse()
 	}
 
 	var bbValues types.BigBangValues
+	version := ""
 
 	if strings.HasPrefix(chartPath, "https") {
 		uri, err := url.Parse(chartPath + "/values.yaml")
 		if err != nil {
-			return bbValues, err
+			return bbValues, version, err
 		}
 		_, bytes, err := http.FetchFromHTTPResource(uri)
 		if err != nil {
-			return bbValues, err
+			return bbValues, version, err
 		}
 		err = yaml.Unmarshal(bytes, &bbValues)
-		return bbValues, err
+
+		uri, err = url.Parse(chartPath + "/Chart.yaml")
+		if err != nil {
+			return bbValues, version, err
+		}
+		_, bytes, err = http.FetchFromHTTPResource(uri)
+		if err != nil {
+			return bbValues, version, err
+		}
+
+		metadata := make(map[string]string)
+		yaml.Unmarshal(bytes, &metadata)
+		version := metadata["version"]
+
+		return bbValues, version, err
 	}
 
 	// assume local file
 	bytes, err := os.ReadFile(chartPath + "/values.yaml")
 	if err != nil {
-		return bbValues, err
+		return bbValues, version, err
 	}
 	err = yaml.Unmarshal(bytes, &bbValues)
 	if err != nil {
-		return bbValues, err
+		return bbValues, version, err
 	}
 
-	return bbValues, nil
+	//Get Chart Version
+
+	bytes, err = os.ReadFile(chartPath + "/Chart.yaml")
+	if err != nil {
+		return bbValues, version, err
+	}
+	metadata := make(map[string]string)
+	yaml.Unmarshal(bytes, &metadata)
+	version = metadata["version"]
+
+	return bbValues, version, nil
 }
 
 // getAllSubchartGitSections extracts the `git:` section from each subchart of Big Bang and returns them in a slice.

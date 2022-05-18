@@ -11,7 +11,7 @@ func BuildBigBangOscalDocument() (string, error) {
 	var components []types.OscalComponent
 
 	bigBangOscalDocument.ComponentDefinition.Metadata.Title = "Big Bang"
-	documents, err := bigbang.GetAllBigBangSubchartOscalComponentDocuments()
+	documents, version, err := bigbang.GetAllBigBangSubchartOscalComponentDocuments()
 	if err != nil {
 		return "", err
 	}
@@ -19,6 +19,8 @@ func BuildBigBangOscalDocument() (string, error) {
 		components = append(components, doc.ComponentDefinition.Components...)
 	}
 	bigBangOscalDocument.ComponentDefinition.Components = components
+	bigBangOscalDocument.ComponentDefinition.Metadata.Title = "Big Bang"
+	bigBangOscalDocument.ComponentDefinition.Metadata.Version = version
 	yamlDocBytes, err := yaml.Marshal(bigBangOscalDocument)
 	if err != nil {
 		return "", err

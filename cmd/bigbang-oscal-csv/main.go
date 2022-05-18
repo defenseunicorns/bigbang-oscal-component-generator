@@ -15,7 +15,7 @@ import (
 func main() {
 	var bigBangOscalDocument types.OscalComponentDocument
 	var components []types.OscalComponent
-	documents, err := bigbang.GetAllBigBangSubchartOscalComponentDocuments()
+	documents, version, err := bigbang.GetAllBigBangSubchartOscalComponentDocuments()
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -23,6 +23,8 @@ func main() {
 		components = append(components, doc.ComponentDefinition.Components...)
 	}
 	bigBangOscalDocument.ComponentDefinition.Components = components
+	bigBangOscalDocument.ComponentDefinition.Metadata.Version = version
+	bigBangOscalDocument.ComponentDefinition.Metadata.Title = "Big Bang"
 	emass := make([][]string, 0)
 	for _, component := range components {
 		// fmt.Printf("Parsing component: %v\n\n\n", component.Title)
