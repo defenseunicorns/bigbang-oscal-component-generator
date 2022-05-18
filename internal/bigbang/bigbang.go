@@ -1,15 +1,25 @@
 package bigbang
 
 import (
+	"flag"
 	"fmt"
+	"log"
+	"net/url"
+	"os"
+	"reflect"
+	"strings"
+
 	"github.com/defenseunicorns/bigbang-oscal-component-generator/internal/http"
 	"github.com/defenseunicorns/bigbang-oscal-component-generator/internal/oscal"
 	"github.com/defenseunicorns/bigbang-oscal-component-generator/internal/types"
 	"gopkg.in/yaml.v2"
-	"log"
-	"net/url"
-	"reflect"
 )
+
+var chartPath string
+
+func init() {
+	flag.StringVar(&chartPath, "chart", "https://repo1.dso.mil/platform-one/big-bang/bigbang/-/raw/master/chart/", "Path to Big Bang Helm chart.  Defaults to master branch on BigBang repo")
+}
 
 // GetAllBigBangSubchartOscalComponentDocuments parses the Big Bang chart's values.yaml file (in the master branch) to
 // find all subchart git references, collects all the oscal-component.yaml files, and returns them in an array
@@ -34,13 +44,28 @@ func GetAllBigBangSubchartOscalComponentDocuments() ([]types.OscalComponentDocum
 }
 
 func getBigBangValues() (types.BigBangValues, error) {
+
+	if !flag.Parsed() {
+		flag.Parse()
+	}
+
 	var bbValues types.BigBangValues
-	fileURL := "https://repo1.dso.mil/platform-one/big-bang/bigbang/-/raw/master/chart/values.yaml"
-	uri, err := url.Parse(fileURL)
-	if err != nil {
+
+	if strings.HasPrefix(chartPath, "https") {
+		uri, err := url.Parse(chartPath + "/values.yaml")
+		if err != nil {
+			return bbValues, err
+		}
+		_, bytes, err := http.FetchFromHTTPResource(uri)
+		if err != nil {
+			return bbValues, err
+		}
+		err = yaml.Unmarshal(bytes, &bbValues)
 		return bbValues, err
 	}
-	_, bytes, err := http.FetchFromHTTPResource(uri)
+
+	// assume local file
+	bytes, err := os.ReadFile(chartPath + "/values.yaml")
 	if err != nil {
 		return bbValues, err
 	}
