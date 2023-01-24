@@ -20,13 +20,9 @@ func BuildBigBangOscalDocument() (string, error) {
 	}
 
 	// Collect the components from Big Bang package component definitions
-	// Currently isn't collecting the components properly
-	// TODO: fix
 	for _, doc := range documents {
-		components = append(components, doc.Components...)
+		components = append(components, doc.ComponentDefinition.Components...)
 	}
-
-	// fmt.Println(components)
 
 	// Populate the Big Bang OSCAL component definition
 	bigBangOscalDocument := types.OscalComponentDocument{

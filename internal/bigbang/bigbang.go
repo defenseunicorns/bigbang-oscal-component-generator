@@ -3,6 +3,7 @@ package bigbang
 import (
 	"flag"
 	"fmt"
+	"log"
 	"net/url"
 	"os"
 	"reflect"
@@ -22,8 +23,8 @@ func init() {
 
 // GetAllBigBangSubchartOscalComponentDocuments parses the Big Bang chart's values.yaml file (in the master branch) to
 // find all subchart git references, collects all the oscal-component.yaml files, and returns them in an array
-func GetAllBigBangSubchartOscalComponentDocuments() ([]types.ComponentDefinition, string, error) {
-	var documents []types.ComponentDefinition
+func GetAllBigBangSubchartOscalComponentDocuments() ([]types.OscalComponentDocument, string, error) {
+	var documents []types.OscalComponentDocument
 	bigBangValues, version, err := getBigBangValues()
 	if err != nil {
 		return nil, "", err
@@ -34,7 +35,7 @@ func GetAllBigBangSubchartOscalComponentDocuments() ([]types.ComponentDefinition
 		if err != nil {
 			// Ignore the error since it is happening in cases where the repo doesn't yet have an OSCAL document,
 			// but still log it to stderr so this author doesn't feel dirty inside.
-			fmt.Printf("No OSCAL document was found for %v:%v\n", git.Repo, git.Tag)
+			log.Println(fmt.Errorf("No OSCAL document was found for %v:%v", git.Repo, git.Tag))
 		}
 		documents = append(documents, document)
 	}
