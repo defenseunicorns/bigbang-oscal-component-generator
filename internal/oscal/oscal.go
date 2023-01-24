@@ -10,8 +10,8 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
-func GetOscalComponentDocumentFromRepo(repo string, tag string) (types.OscalComponentDocument, error) {
-	var document types.OscalComponentDocument
+func GetOscalComponentDocumentFromRepo(repo string, tag string) (types.ComponentDefinition, error) {
+	var document types.ComponentDefinition
 	repo = strings.Replace(repo, ".git", "", -1)
 	rawUrl := fmt.Sprintf("%s/-/raw/%s/oscal-component.yaml", repo, tag)
 	uri, err := url.Parse(rawUrl)

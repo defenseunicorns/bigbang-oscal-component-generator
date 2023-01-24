@@ -9,25 +9,49 @@ import (
 )
 
 func BuildBigBangOscalDocument() (string, error) {
-	var bigBangOscalDocument types.OscalComponentDocument
-	var components []types.OscalComponent
-	var rfc3339Time = time.Now().Format(time.RFC3339)
+	var (
+		components  = []types.DefinedComponent{}
+		rfc3339Time = time.Now().Format(time.RFC3339)
+	)
 
 	documents, version, err := bigbang.GetAllBigBangSubchartOscalComponentDocuments()
 	if err != nil {
 		return "", err
 	}
+
+	// Collect the components from Big Bang package component definitions
+	// Currently isn't collecting the components properly
+	// TODO: fix
 	for _, doc := range documents {
-		components = append(components, doc.ComponentDefinition.Components...)
+		components = append(components, doc.Components...)
 	}
-	bigBangOscalDocument.ComponentDefinition.Metadata.Title = "Big Bang"
-	bigBangOscalDocument.ComponentDefinition.Metadata.LastModified = rfc3339Time
-	bigBangOscalDocument.ComponentDefinition.Metadata.Version = version
-	bigBangOscalDocument.ComponentDefinition.Metadata.Parties.Type = "organization"
-	bigBangOscalDocument.ComponentDefinition.Metadata.Parties.Name = "Platform One"
-	bigBangOscalDocument.ComponentDefinition.Metadata.Parties.Links.Href = "<https://p1.dso.mil>"
-	bigBangOscalDocument.ComponentDefinition.Metadata.Parties.Links.Rel = "website"
-	bigBangOscalDocument.ComponentDefinition.Components = components
+
+	// fmt.Println(components)
+
+	// Populate the Big Bang OSCAL component definition
+	bigBangOscalDocument := types.OscalComponentDocument{
+		ComponentDefinition: types.ComponentDefinition{
+			Components: components,
+			Metadata: types.Metadata{
+				Title:        "Big Bang",
+				Version:      version,
+				OscalVersion: "1.0.4",
+				LastModified: rfc3339Time,
+				Parties: []types.Party{
+					{
+						Type: "organization",
+						Name: "Platform One",
+						Links: []types.Link{
+							{
+								Href: "<https://p1.dso.mil>",
+								Rel:  "website",
+							},
+						},
+					},
+				},
+			},
+		},
+	}
 
 	yamlDocBytes, err := yaml.Marshal(bigBangOscalDocument)
 	if err != nil {
