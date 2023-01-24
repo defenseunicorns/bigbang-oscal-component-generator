@@ -1,10 +1,12 @@
 package bigbangoscal
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/defenseunicorns/bigbang-oscal-component-generator/internal/bigbang"
 	"github.com/defenseunicorns/bigbang-oscal-component-generator/internal/types"
+	"github.com/google/uuid"
 	"gopkg.in/yaml.v2"
 )
 
@@ -27,6 +29,7 @@ func BuildBigBangOscalDocument() (string, error) {
 	// Populate the Big Bang OSCAL component definition
 	bigBangOscalDocument := types.OscalComponentDocument{
 		ComponentDefinition: types.ComponentDefinition{
+			UUID:       generateUUID(),
 			Components: components,
 			Metadata: types.Metadata{
 				Title:        "Big Bang",
@@ -35,6 +38,7 @@ func BuildBigBangOscalDocument() (string, error) {
 				LastModified: rfc3339Time,
 				Parties: []types.Party{
 					{
+						UUID: generateUUID(),
 						Type: "organization",
 						Name: "Platform One",
 						Links: []types.Link{
@@ -54,6 +58,13 @@ func BuildBigBangOscalDocument() (string, error) {
 		return "", err
 	}
 	return string(yamlDocBytes), nil
+}
+
+func generateUUID() string {
+	id := uuid.New()
+	idString := fmt.Sprintf("%v", id)
+
+	return idString
 }
 
 //func BuildBigBangComplianceCsv() (string, error) {
