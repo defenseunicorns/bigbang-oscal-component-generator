@@ -60,6 +60,7 @@ func BuildBigBangOscalDocument() (string, error) {
 	return string(yamlDocBytes), nil
 }
 
+// generateUUID generates UUIDs
 func generateUUID() string {
 	id := uuid.New()
 	idString := fmt.Sprintf("%v", id)
