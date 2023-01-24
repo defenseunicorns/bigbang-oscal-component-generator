@@ -1,2 +1,13 @@
 # bigbang-oscal-component-generator
-(likely temporary) location for a CLI tool that generates an oscal-component.yaml file for Big Bang by collecting all subcomponents
+
+## Usage
+
+```bash
+git clone https://github.com/defenseunicorns/bigbang-oscal-component-generator.git
+```
+
+Generate the Big Bang OSCAL component definition file, `oscal-component.yaml`, in the same directory where the command was ran
+
+```bash
+make
+```
