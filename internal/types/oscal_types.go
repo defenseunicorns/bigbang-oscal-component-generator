@@ -4,7 +4,7 @@ This file was auto-generated with go-oscal: https://github.com/defenseunicorns/g
 One struct has been manually added to this file: OscalComponentDocument
 
 This struct is needed to create the top-level "component-definition:" field
-in the generated OSCAL componenet definition.
+in the generated OSCAL component definition.
 */
 
 package types

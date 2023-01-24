@@ -3,7 +3,6 @@ package bigbang
 import (
 	"flag"
 	"fmt"
-	"log"
 	"net/url"
 	"os"
 	"reflect"
@@ -35,7 +34,7 @@ func GetAllBigBangSubchartOscalComponentDocuments() ([]types.ComponentDefinition
 		if err != nil {
 			// Ignore the error since it is happening in cases where the repo doesn't yet have an OSCAL document,
 			// but still log it to stderr so this author doesn't feel dirty inside.
-			log.Println(fmt.Errorf("an error occurred when pulling the OSCAL document for %v@%v, the data may or may not have been retrieved: %+v", git.Repo, git.Tag, err))
+			fmt.Printf("No OSCAL document was found for %v:%v\n", git.Repo, git.Tag)
 		}
 		documents = append(documents, document)
 	}
