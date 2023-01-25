@@ -1,0 +1,27 @@
+name: Validate OSCAL Component Definition Schema
+on:
+  push:
+    branches:
+      - "main"
+  pull_request:
+    paths:
+      - "**.go"
+
+jobs:
+  validate-schema:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    - name: Setup Java
+      uses: actions/setup-java@v3
+      with:
+        distribution: adopt
+        java-version: 11
+
+    - name: Run oscal-cli for version check (debugging on)
+      uses: oscal-club/oscal-cli-action@v1
+      with:
+      # component-definition validate --as yaml oscal-component.yaml
+        args: --version
