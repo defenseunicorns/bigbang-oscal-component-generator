@@ -14,14 +14,16 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v3
 
+    - name: Generate Big Bang OSCAL component definition
+      run: make
+
     - name: Setup Java
       uses: actions/setup-java@v3
       with:
         distribution: adopt
         java-version: 11
 
-    - name: Run oscal-cli for version check (debugging on)
+    - name: Validate Schema with oscal-cli
       uses: oscal-club/oscal-cli-action@v1
       with:
-      # component-definition validate --as yaml oscal-component.yaml
-        args: --version
+        args: component-definition validate --as yaml oscal-component.yaml
