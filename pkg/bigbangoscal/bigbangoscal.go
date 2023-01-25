@@ -48,7 +48,7 @@ func BuildBigBangOscalDocument() (string, error) {
 						Name: "Platform One",
 						Links: []types.Link{
 							{
-								Href: "<https://p1.dso.mil>",
+								Href: "https://p1.dso.mil",
 								Rel:  "website",
 							},
 						},
