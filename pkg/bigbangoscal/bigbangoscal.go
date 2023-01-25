@@ -12,8 +12,9 @@ import (
 
 func BuildBigBangOscalDocument() (string, error) {
 	var (
-		components  = []types.DefinedComponent{}
-		rfc3339Time = time.Now().Format(time.RFC3339)
+		backMatterResources = []types.Resources{}
+		components          = []types.DefinedComponent{}
+		rfc3339Time         = time.Now().Format(time.RFC3339)
 	)
 
 	documents, version, err := bigbang.GetAllBigBangSubchartOscalComponentDocuments()
@@ -21,9 +22,10 @@ func BuildBigBangOscalDocument() (string, error) {
 		return "", err
 	}
 
-	// Collect the components from Big Bang package component definitions
+	// Collect the components and back-matter fields from Big Bang package component definitions
 	for _, doc := range documents {
 		components = append(components, doc.ComponentDefinition.Components...)
+		backMatterResources = append(backMatterResources, doc.ComponentDefinition.BackMatter.Resources...)
 	}
 
 	// Populate the Big Bang OSCAL component definition
@@ -31,6 +33,9 @@ func BuildBigBangOscalDocument() (string, error) {
 		ComponentDefinition: types.ComponentDefinition{
 			UUID:       generateUUID(),
 			Components: components,
+			BackMatter: types.BackMatter{
+				Resources: backMatterResources,
+			},
 			Metadata: types.Metadata{
 				Title:        "Big Bang",
 				Version:      version,
