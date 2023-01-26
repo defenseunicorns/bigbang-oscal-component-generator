@@ -16,3 +16,8 @@
 
 # Dependency directories (remove the comment below to include it)
 # vendor/
+
+oscal-component.y*ml
+bb-oscal*
+bigbang-oscal-component-generator*
+bigbang-oscal-csv*

@@ -1,7 +1,5 @@
 package types
 
-import "time"
-
 type BigBangValues struct {
 	Domain              string `yaml:"domain"`
 	Offline             bool   `yaml:"offline"`
@@ -30,6 +28,7 @@ type BigBangValues struct {
 		} `yaml:"oidc"`
 		CertificateAuthority string `yaml:"certificate_authority"`
 		Jwks                 string `yaml:"jwks"`
+		JwksURI              string `yaml:"jwks_uri"`
 		ClientID             string `yaml:"client_id"`
 		ClientSecret         string `yaml:"client_secret"`
 		TokenURL             string `yaml:"token_url"`
@@ -187,6 +186,15 @@ type BigBangValues struct {
 		} `yaml:"values"`
 		PostRenderers []interface{} `yaml:"postRenderers"`
 	} `yaml:"kyvernopolicies"`
+	Kyvernoreporter struct {
+		Enabled bool `yaml:"enabled"`
+		Git     Git  `yaml:"git"`
+		Flux    struct {
+		} `yaml:"flux"`
+		Values struct {
+		} `yaml:"values"`
+		PostRenderers []interface{} `yaml:"postRenderers"`
+	} `yaml:"kyvernoreporter"`
 	Logging struct {
 		Enabled bool `yaml:"enabled"`
 		Git     Git  `yaml:"git"`
@@ -237,17 +245,34 @@ type BigBangValues struct {
 	} `yaml:"promtail"`
 	Loki struct {
 		Enabled bool `yaml:"enabled"`
-		Git     struct {
-			Repo string `yaml:"repo"`
-			Path string `yaml:"path"`
-			Tag  string `yaml:"tag"`
-		} `yaml:"git"`
+		Git     Git  `yaml:"git"`
+		Flux    struct {
+		} `yaml:"flux"`
+		Strategy      string `yaml:"strategy"`
+		ObjectStorage struct {
+			Endpoint     string `yaml:"endpoint"`
+			Region       string `yaml:"region"`
+			AccessKey    string `yaml:"accessKey"`
+			AccessSecret string `yaml:"accessSecret"`
+			BucketNames  struct {
+			} `yaml:"bucketNames"`
+		} `yaml:"objectStorage"`
+		Values struct {
+		} `yaml:"values"`
+		PostRenderers []interface{} `yaml:"postRenderers"`
+	} `yaml:"loki"`
+	Neuvector struct {
+		Enabled bool `yaml:"enabled"`
+		Git     Git  `yaml:"git"`
+		Ingress struct {
+			Gateway string `yaml:"gateway"`
+		} `yaml:"ingress"`
 		Flux struct {
 		} `yaml:"flux"`
 		Values struct {
 		} `yaml:"values"`
 		PostRenderers []interface{} `yaml:"postRenderers"`
-	} `yaml:"loki"`
+	} `yaml:"neuvector"`
 	Tempo struct {
 		Enabled bool `yaml:"enabled"`
 		Git     Git  `yaml:"git"`
@@ -256,6 +281,19 @@ type BigBangValues struct {
 		} `yaml:"ingress"`
 		Flux struct {
 		} `yaml:"flux"`
+		Sso struct {
+			Enabled      bool   `yaml:"enabled"`
+			ClientID     string `yaml:"client_id"`
+			ClientSecret string `yaml:"client_secret"`
+		} `yaml:"sso"`
+		ObjectStorage struct {
+			Endpoint     string `yaml:"endpoint"`
+			Region       string `yaml:"region"`
+			AccessKey    string `yaml:"accessKey"`
+			AccessSecret string `yaml:"accessSecret"`
+			Bucket       string `yaml:"bucket"`
+			Insecure     bool   `yaml:"insecure"`
+		} `yaml:"objectStorage"`
 		Values struct {
 		} `yaml:"values"`
 		PostRenderers []interface{} `yaml:"postRenderers"`
@@ -304,6 +342,17 @@ type BigBangValues struct {
 		Ingress struct {
 			Gateway string `yaml:"gateway"`
 		} `yaml:"ingress"`
+		Sso struct {
+			Enabled      bool   `yaml:"enabled"`
+			ClientID     string `yaml:"client_id"`
+			ProviderName string `yaml:"provider_name"`
+			ProviderType string `yaml:"provider_type"`
+			IssuerURI    string `yaml:"issuer_uri"`
+			IdpURL       string `yaml:"idp_url"`
+			ConsoleURL   string `yaml:"console_url"`
+			Groups       string `yaml:"groups"`
+			Cert         string `yaml:"cert"`
+		} `yaml:"sso"`
 		Values struct {
 		} `yaml:"values"`
 		PostRenderers []interface{} `yaml:"postRenderers"`
@@ -372,11 +421,7 @@ type BigBangValues struct {
 				Gitlab   string `yaml:"gitlab"`
 				Registry string `yaml:"registry"`
 			} `yaml:"hostnames"`
-			Git struct {
-				Repo string `yaml:"repo"`
-				Path string `yaml:"path"`
-				Tag  string `yaml:"tag"`
-			} `yaml:"git"`
+			Git  Git `yaml:"git"`
 			Flux struct {
 			} `yaml:"flux"`
 			Ingress struct {
@@ -408,6 +453,9 @@ type BigBangValues struct {
 				BucketPrefix string `yaml:"bucketPrefix"`
 				IamProfile   string `yaml:"iamProfile"`
 			} `yaml:"objectStorage"`
+			SMTP struct {
+				Password string `yaml:"password"`
+			} `yaml:"smtp"`
 			Redis struct {
 				Password string `yaml:"password"`
 			} `yaml:"redis"`
@@ -486,11 +534,7 @@ type BigBangValues struct {
 			PostRenderers []interface{} `yaml:"postRenderers"`
 		} `yaml:"sonarqube"`
 		Haproxy struct {
-			Git struct {
-				Repo string `yaml:"repo"`
-				Path string `yaml:"path"`
-				Tag  string `yaml:"tag"`
-			} `yaml:"git"`
+			Git  Git `yaml:"git"`
 			Flux struct {
 			} `yaml:"flux"`
 			Ingress struct {
@@ -619,6 +663,7 @@ type BigBangValues struct {
 			} `yaml:"ingress"`
 			Values struct {
 			} `yaml:"values"`
+			PostRenderers []interface{} `yaml:"postRenderers"`
 		} `yaml:"keycloak"`
 		Vault struct {
 			Enabled bool `yaml:"enabled"`
@@ -627,69 +672,26 @@ type BigBangValues struct {
 			} `yaml:"flux"`
 			Ingress struct {
 				Gateway string `yaml:"gateway"`
+				Key     string `yaml:"key"`
+				Cert    string `yaml:"cert"`
 			} `yaml:"ingress"`
 			Values struct {
 			} `yaml:"values"`
 			PostRenderers []interface{} `yaml:"postRenderers"`
 		} `yaml:"vault"`
+		MetricsServer struct {
+			Enabled string `yaml:"enabled"`
+			Git     Git    `yaml:"git"`
+			Flux    struct {
+			} `yaml:"flux"`
+			Values struct {
+			} `yaml:"values"`
+			PostRenderers []interface{} `yaml:"postRenderers"`
+		} `yaml:"metricsServer"`
 	} `yaml:"addons"`
 }
-
 type Git struct {
 	Repo string `yaml:"repo"`
 	Path string `yaml:"path,omitempty"`
 	Tag  string `yaml:"tag,omitempty"`
-}
-
-type OscalComponentDocument struct {
-	ComponentDefinition struct {
-		UUID     string `yaml:"uuid"`
-		Metadata struct {
-			Title        string    `yaml:"title"`
-			LastModified time.Time `yaml:"last-modified"`
-			Version      string    `yaml:"version"`
-			OscalVersion string    `yaml:"oscal-version"`
-			Parties      []struct {
-				UUID  string `yaml:"uuid"`
-				Type  string `yaml:"type"`
-				Name  string `yaml:"name"`
-				Links []struct {
-					Href string `yaml:"href"`
-					Rel  string `yaml:"rel"`
-				} `yaml:"links"`
-			} `yaml:"parties"`
-		} `yaml:"metadata"`
-		Components []OscalComponent `yaml:"components"`
-		BackMatter struct {
-			Resources []struct {
-				UUID   string `yaml:"uuid"`
-				Title  string `yaml:"title"`
-				Rlinks []struct {
-					Href string `yaml:"href"`
-				} `yaml:"rlinks"`
-			} `yaml:"resources"`
-		} `yaml:"back-matter"`
-	} `yaml:"component-definition"`
-}
-
-type OscalComponent struct {
-	UUID             string `yaml:"uuid"`
-	Type             string `yaml:"type"`
-	Title            string `yaml:"title"`
-	Description      string `yaml:"description"`
-	Purpose          string `yaml:"purpose"`
-	ResponsibleRoles []struct {
-		RoleID    string `yaml:"role-id"`
-		PartyUUID string `yaml:"party-uuid"`
-	} `yaml:"responsible-roles"`
-	ControlImplementations []struct {
-		UUID                    string `yaml:"uuid"`
-		Source                  string `yaml:"source"`
-		Description             string `yaml:"description"`
-		ImplementedRequirements []struct {
-			UUID        string `yaml:"uuid"`
-			ControlID   string `yaml:"control-id"`
-			Description string `yaml:"description"`
-		} `yaml:"implemented-requirements"`
-	} `yaml:"control-implementations"`
 }

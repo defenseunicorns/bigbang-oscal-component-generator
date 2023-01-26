@@ -1,31 +1,76 @@
 package bigbangoscal
 
 import (
+	"fmt"
+	"time"
+
 	"github.com/defenseunicorns/bigbang-oscal-component-generator/internal/bigbang"
 	"github.com/defenseunicorns/bigbang-oscal-component-generator/internal/types"
+	"github.com/google/uuid"
 	"gopkg.in/yaml.v2"
 )
 
 func BuildBigBangOscalDocument() (string, error) {
-	var bigBangOscalDocument types.OscalComponentDocument
-	var components []types.OscalComponent
+	var (
+		backMatterResources = []types.Resources{}
+		components          = []types.DefinedComponent{}
+		rfc3339Time         = time.Now().Format(time.RFC3339)
+	)
 
-	bigBangOscalDocument.ComponentDefinition.Metadata.Title = "Big Bang"
 	documents, version, err := bigbang.GetAllBigBangSubchartOscalComponentDocuments()
 	if err != nil {
 		return "", err
 	}
+
+	// Collect the components and back-matter fields from Big Bang package component definitions
 	for _, doc := range documents {
 		components = append(components, doc.ComponentDefinition.Components...)
+		backMatterResources = append(backMatterResources, doc.ComponentDefinition.BackMatter.Resources...)
 	}
-	bigBangOscalDocument.ComponentDefinition.Components = components
-	bigBangOscalDocument.ComponentDefinition.Metadata.Title = "Big Bang"
-	bigBangOscalDocument.ComponentDefinition.Metadata.Version = version
+
+	// Populate the Big Bang OSCAL component definition
+	bigBangOscalDocument := types.OscalComponentDocument{
+		ComponentDefinition: types.ComponentDefinition{
+			UUID:       generateUUID(),
+			Components: components,
+			BackMatter: types.BackMatter{
+				Resources: backMatterResources,
+			},
+			Metadata: types.Metadata{
+				Title:        "Big Bang",
+				Version:      version,
+				OscalVersion: "1.0.4",
+				LastModified: rfc3339Time,
+				Parties: []types.Party{
+					{
+						UUID: generateUUID(),
+						Type: "organization",
+						Name: "Platform One",
+						Links: []types.Link{
+							{
+								Href: "https://p1.dso.mil",
+								Rel:  "website",
+							},
+						},
+					},
+				},
+			},
+		},
+	}
+
 	yamlDocBytes, err := yaml.Marshal(bigBangOscalDocument)
 	if err != nil {
 		return "", err
 	}
 	return string(yamlDocBytes), nil
+}
+
+// generateUUID generates UUIDs
+func generateUUID() string {
+	id := uuid.New()
+	idString := fmt.Sprintf("%v", id)
+
+	return idString
 }
 
 //func BuildBigBangComplianceCsv() (string, error) {

@@ -1,7 +1,8 @@
 module github.com/defenseunicorns/bigbang-oscal-component-generator
 
-go 1.18
+go 1.19
 
-require gopkg.in/yaml.v2 v2.4.0
-
-require golang.org/x/exp v0.0.0-20220407100705-7b9b53b0aca4 // indirect
+require (
+	github.com/google/uuid v1.3.0
+	gopkg.in/yaml.v2 v2.4.0
+)
