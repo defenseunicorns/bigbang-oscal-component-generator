@@ -1,7 +1,7 @@
 package bigbang
 
 import (
-	"flag"
+	"encoding/json"
 	"fmt"
 	"log"
 	"net/url"
@@ -12,20 +12,15 @@ import (
 	"github.com/defenseunicorns/bigbang-oscal-component-generator/internal/http"
 	"github.com/defenseunicorns/bigbang-oscal-component-generator/internal/oscal"
 	"github.com/defenseunicorns/bigbang-oscal-component-generator/internal/types"
+	"github.com/xeipuuv/gojsonschema"
 	"gopkg.in/yaml.v2"
 )
 
-var chartPath string
-
-func init() {
-	flag.StringVar(&chartPath, "chart", "https://repo1.dso.mil/platform-one/big-bang/bigbang/-/raw/master/chart/", "Path to Big Bang Helm chart.  Defaults to master branch on BigBang repo")
-}
-
 // GetAllBigBangSubchartOscalComponentDocuments parses the Big Bang chart's values.yaml file (in the master branch) to
 // find all subchart git references, collects all the oscal-component.yaml files, and returns them in an array
-func GetAllBigBangSubchartOscalComponentDocuments() ([]types.OscalComponentDocument, string, error) {
+func GetAllBigBangSubchartOscalComponentDocuments(chartPath string) ([]types.OscalComponentDocument, string, error) {
 	var documents []types.OscalComponentDocument
-	bigBangValues, version, err := getBigBangValues()
+	bigBangValues, version, err := getBigBangValues(chartPath)
 	if err != nil {
 		return nil, "", err
 	}
@@ -36,19 +31,21 @@ func GetAllBigBangSubchartOscalComponentDocuments() ([]types.OscalComponentDocum
 			// Ignore the error since it is happening in cases where the repo doesn't yet have an OSCAL document,
 			// but still log it to stderr so this author doesn't feel dirty inside.
 			log.Println(fmt.Errorf("No OSCAL document was found for %v:%v", git.Repo, git.Tag))
+		} else {
+			log.Println(fmt.Errorf("Validiating OSCAL document: %v:%v", git.Repo, git.Tag))
+			valid, _ := validateOscalSchema(document)
+			if valid {
+				log.Println(fmt.Errorf("Valid OSCAL document was found for %v:%v", git.Repo, git.Tag))
+			}
+
+			documents = append(documents, document)
 		}
-		documents = append(documents, document)
 	}
 
 	return documents, version, nil
 }
 
-func getBigBangValues() (types.BigBangValues, string, error) {
-
-	if !flag.Parsed() {
-		flag.Parse()
-	}
-
+func getBigBangValues(chartPath string) (types.BigBangValues, string, error) {
 	var bbValues types.BigBangValues
 	version := ""
 
@@ -152,4 +149,31 @@ func convertReflectToGit(reflectValue reflect.Value) (types.Git, bool) {
 	}
 	// Fall through failure case.
 	return types.Git{}, false
+}
+
+func validateOscalSchema(document types.OscalComponentDocument) (bool, error) {
+
+	documentJsonb, err := json.Marshal(document)
+	if err != nil {
+		return false, err
+	}
+
+	schemaLoader := gojsonschema.NewReferenceLoader("https://raw.githubusercontent.com/usnistgov/OSCAL/main/json/schema/oscal_component_schema.json")
+	documentLoader := gojsonschema.NewStringLoader(string(documentJsonb))
+
+	result, err := gojsonschema.Validate(schemaLoader, documentLoader)
+
+	if err != nil {
+		return false, nil
+	}
+
+	if result.Valid() {
+		return true, nil
+	}
+
+	for _, desc := range result.Errors() {
+		log.Println(fmt.Errorf("schema validation failed: %s", desc))
+	}
+
+	return false, nil
 }

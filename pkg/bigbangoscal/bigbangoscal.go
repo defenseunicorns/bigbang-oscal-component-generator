@@ -2,6 +2,8 @@ package bigbangoscal
 
 import (
 	"fmt"
+	"io/ioutil"
+	"log"
 	"time"
 
 	"github.com/defenseunicorns/bigbang-oscal-component-generator/internal/bigbang"
@@ -10,23 +12,50 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
-func BuildBigBangOscalDocument() (string, error) {
+func BuildBigBangOscalDocument(chartPath string, oscalPath string) (string, error) {
 	var (
 		backMatterResources = []types.Resources{}
 		components          = []types.DefinedComponent{}
 		rfc3339Time         = time.Now().Format(time.RFC3339)
+		partyUUID           = generateUUID()
 	)
 
-	documents, version, err := bigbang.GetAllBigBangSubchartOscalComponentDocuments()
+	existingDoc := types.OscalComponentDocument{}
+
+	log.Println(fmt.Errorf("Reading %s", oscalPath))
+
+	if oscalPath != "" {
+		log.Println(fmt.Errorf("Reading %s", oscalPath))
+		readOscal(oscalPath, &existingDoc)
+
+		log.Println(fmt.Errorf("Detected %d parties", len(existingDoc.ComponentDefinition.Metadata.Parties)))
+
+		if len(existingDoc.ComponentDefinition.Metadata.Parties) > 0 {
+			log.Println(fmt.Errorf("Using existing UUID %s", partyUUID))
+			partyUUID = existingDoc.ComponentDefinition.Metadata.Parties[0].UUID
+		}
+	}
+
+	documents, version, err := bigbang.GetAllBigBangSubchartOscalComponentDocuments(chartPath)
 	if err != nil {
 		return "", err
 	}
 
 	// Collect the components and back-matter fields from Big Bang package component definitions
 	for _, doc := range documents {
+		attachVersionProps(&doc)
+
 		components = append(components, doc.ComponentDefinition.Components...)
+
 		backMatterResources = append(backMatterResources, doc.ComponentDefinition.BackMatter.Resources...)
 	}
+
+	// childCompare := reflect.DeepEqual(components, existingDoc.ComponentDefinition.Components)
+	// diff := deep.Equal(components, existingDoc.ComponentDefinition.Components)
+
+	// if diff != nil {
+	// 	log.Println(fmt.Errorf("compare failed: %v", diff))
+	// }
 
 	// Populate the Big Bang OSCAL component definition
 	bigBangOscalDocument := types.OscalComponentDocument{
@@ -43,7 +72,7 @@ func BuildBigBangOscalDocument() (string, error) {
 				LastModified: rfc3339Time,
 				Parties: []types.Party{
 					{
-						UUID: generateUUID(),
+						UUID: partyUUID,
 						Type: "organization",
 						Name: "Platform One",
 						Links: []types.Link{
@@ -71,6 +100,30 @@ func generateUUID() string {
 	idString := fmt.Sprintf("%v", id)
 
 	return idString
+}
+
+func readOscal(path string, doc *types.OscalComponentDocument) *types.OscalComponentDocument {
+	yamlFile, err := ioutil.ReadFile(path)
+	if err != nil {
+		log.Printf("yamlFile.Get err   #%v ", err)
+	}
+	err = yaml.Unmarshal(yamlFile, doc)
+	if err != nil {
+		log.Fatalf("Unmarshal: %v", err)
+	}
+
+	return doc
+}
+
+func attachVersionProps(doc *types.OscalComponentDocument) error {
+	for i := range doc.ComponentDefinition.Components {
+		doc.ComponentDefinition.Components[i].Props = append(doc.ComponentDefinition.Components[i].Props, types.Property{
+			Name:  "version",
+			Value: doc.ComponentDefinition.UUID,
+		})
+	}
+
+	return nil
 }
 
 //func BuildBigBangComplianceCsv() (string, error) {
