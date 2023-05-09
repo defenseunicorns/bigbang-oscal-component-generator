@@ -158,7 +158,7 @@ func validateOscalSchema(document types.OscalComponentDocument) (bool, error) {
 		return false, err
 	}
 
-	schemaLoader := gojsonschema.NewReferenceLoader("https://raw.githubusercontent.com/usnistgov/OSCAL/main/json/schema/oscal_component_schema.json")
+	schemaLoader := gojsonschema.NewReferenceLoader("https://repo1.dso.mil/big-bang/pipeline-templates/pipeline-templates/-/raw/master/oscal/oscal_component_schema.json")
 	documentLoader := gojsonschema.NewStringLoader(string(documentJsonb))
 
 	result, err := gojsonschema.Validate(schemaLoader, documentLoader)
