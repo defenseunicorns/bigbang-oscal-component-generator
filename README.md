@@ -1,5 +1,9 @@
 # bigbang-oscal-component-generator
 
+## ⚠️ Deprecation and Archive Notice
+
+This project is no longer receiving maintenance updates and is being deprecated. Please see [Component-Generator](https://github.com/defenseunicorns/component-generator) as the universal tool for aggregating component definition OSCAL files.
+
 ## Usage
 
 This tool was purpose-built for [Big Bang](https://repo1.dso.mil/big-bang/bigbang), so these usage instructions are intended to describe how it can be used in Big Bang's CI system.
